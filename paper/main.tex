@@ -95,15 +95,15 @@ We take the opposite approach: build a world where the truth is known, so that s
   \draw[arr] (pilot) -- (design);
   \draw[arr] (design) -- (run);
   \draw[arr] (run) -- (analyse);
-  \draw[arr] (analyse.north west) to[bend left=22] node[font=\scriptsize,below left=-1pt,align=right]{repeat while\\budget lasts} (design.south east);
+  \draw[arr] (analyse.north west) to[bend left=22] (design.south east);
   \draw[arr] (analyse) -- (claim);
   \draw[arr] (claim) -- (score);
   \draw[arr,draw=axclay,dashed] (truth) -- (score);
   \begin{scope}[on background layer]
     \node[draw=axolive,dashed,rounded corners=4pt,fit=(design)(run)(analyse),inner sep=4pt,
-      label={[font=\scriptsize\color{axolive}]above:agent, 30 participant-hours}] {};
+      label={[font=\scriptsize\color{axolive}]above:agent loop: design, run, analyse, repeat until 30 participant-hours are spent}] {};
   \end{scope}
-  \node[ax,below=9mm of $(claim)!0.5!(analyse)$,font=\scriptsize,minimum height=7mm] (ideal) {\textbf{Ideal analyst} re-analyses the agent's own data:\ \ claims $-$ ideal $=$ \emph{analysis error};\ \ ideal $-$ oracle $=$ \emph{design error}};
+  \node[ax,font=\scriptsize,minimum height=7mm,text width=9.6cm] (ideal) at ($(score.south)!0.5!(analyse.south)+(0,-1.1)$) {\textbf{Ideal analyst} re-analyses the agent's own data.\ \ Claims $-$ ideal $=$ \emph{analysis error};\ \ ideal $-$ oracle $=$ \emph{design error}.};
   \draw[arr,draw=axolive] (analyse.south) -- (analyse.south |- ideal.north);
 \end{tikzpicture}
 \caption{An Axiom episode. The agent sees only the pilot data and the tools; the mechanism stays hidden until scoring. Re-analysing the agent's own data with an ideal analyst splits every failure into a design part and an analysis part.}
@@ -141,12 +141,12 @@ Practice follows a saturating learning curve, so a linear time covariate cannot 
   \node[font=\scriptsize,right=1mm of Y,align=left] {performance\\(RT, accuracy)};
   \node[font=\scriptsize,right=1mm of T,align=left] {frontal theta};
   \node[font=\scriptsize,above=0.5mm of B] {blinks};
-  \draw[edge] (L) -- (Y);
+  \draw[edge] (L) to[bend left=14] (Y);
   \draw[edge] (S) -- (Y);
   \draw[edge] (P) to[bend right=12] (Y);
   \draw[edge] (L) -- (T);
   \draw[edge] (L) -- (B);
-  \node[draw=axolive,fill=axolive!10,diamond,inner sep=1.2pt,font=\scriptsize] (SL) at (1.75,0.75) {$S{\times}L$};
+  \node[draw=axolive,fill=axolive!10,diamond,inner sep=1.2pt,font=\scriptsize] (SL) at (1.45,0.62) {$S{\times}L$};
   \draw[axolive,line width=0.5pt] (L) -- (SL) -- (S);
   \draw[edge] (SL) -- (Y);
   \draw[trap] (B) -- node[font=\scriptsize,above right=-1pt,text=axclay]{contaminates} (T);

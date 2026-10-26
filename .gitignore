@@ -19,3 +19,4 @@ site/summary.json
 .DS_Store
 paper/figures/
 paper/*.toc
+release-notes.md

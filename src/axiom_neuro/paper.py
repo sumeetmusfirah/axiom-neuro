@@ -22,7 +22,7 @@ def _f(x, nd=3):
 def build() -> list[str]:
     GEN.mkdir(parents=True, exist_ok=True)
     cfg = load_config()
-    rows = L.read_rows()
+    rows = L.primary(L.read_rows())
     ok = L.ok_rows(rows)
     summ = summarize(rows)
     llm_n = sum(r["agent"] == "llm" for r in ok)

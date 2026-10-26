@@ -129,7 +129,7 @@ def pick_episodes(rows: list[dict], per_model: int = 1) -> list[dict]:
 
 def build_all() -> list[str]:
     paths = []
-    for r in pick_episodes(L.read_rows()):
+    for r in pick_episodes(L.primary(L.read_rows())):
         if not (REPO / r["transcript"]).exists():
             continue
         p = animate(r, OUT / f"episode_{r['model'].replace(':', '_')}_{r['task_id']}.gif")

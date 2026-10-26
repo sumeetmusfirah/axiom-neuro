@@ -1,4 +1,5 @@
 # The engine. Every 6 hours: plan what is left -> run it in parallel shards -> merge -> report -> commit.
+# When the queue is empty it freezes the next replication wave on schedule (waves.py), so it keeps going.
 # Self-resuming: every episode is written as it finishes; anything unfinished is re-planned next run.
 # Self-limiting: gates in `axiom plan` block work until the fit, baselines and task freeze are in order,
 # and the adaptive seed rule stops a cell once its result is precise enough.
@@ -56,12 +57,15 @@ jobs:
       - name: Bio lab (fetch Sachs cells, freeze bio tasks)
         if: contains(needs.plan.outputs.setup, 'bio')
         run: .venv/bin/axiom bio-setup
+      - name: Freeze the next replication wave (fresh, never-seen tasks)
+        if: contains(needs.plan.outputs.setup, 'wave')
+        run: .venv/bin/axiom freeze-wave
       - run: .venv/bin/axiom report
       - name: Commit setup outputs
         run: |
           git config user.name "axiom-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/ results/oracle_designs.json results/RESULTS.md results/summary.json tasks/
+          git add data/ results/oracle_designs.json results/RESULTS.md results/summary.json tasks/ README.md
           git diff --cached --quiet && exit 0
           git commit -m "setup: ${{ needs.plan.outputs.setup }} (run ${{ github.run_id }})"
           for i in 1 2 3 4 5; do git pull --rebase && git push && exit 0; sleep $((i * 10)); done; exit 1
@@ -124,7 +128,7 @@ jobs:
           git config user.name "axiom-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           rm -rf results/incoming
-          git add results/
+          git add results/ README.md
           git diff --cached --quiet && { echo "no new results"; exit 0; }
           n=$(git diff --cached --numstat results/ledger.jsonl | awk '{print $1}')
           git commit -m "results: +${n:-0} ledger rows (run ${{ github.run_id }})"

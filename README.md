@@ -8,6 +8,20 @@ Axiom-Neuro is a simulated cognitive-neuroscience lab with known ground truth, f
 
 **[Project page, figures and animations](https://sumeetmusfirah.github.io/axiom-neuro/)** · **[Paper (PDF, rebuilt from live results)](https://sumeetmusfirah.github.io/axiom-neuro/axiom-neuro.pdf)** · **[Live results](results/RESULTS.md)** · **[Preregistration](PREREGISTRATION.md)** · **[Architecture](docs/ARCHITECTURE.md)**
 
+## Leaderboard
+
+Rebuilt from the ledger after every run. Full tables, both tracks, Axiom-Bio and the hypothesis tests are in [results/RESULTS.md](results/RESULTS.md).
+
+<!-- leaderboard:start -->
+_Axiom-Neuro, synthetic track, named labels. Data as of 2026-10-26T00:00:13.171356+00:00._
+
+| # | Agent | Edge Brier [95% CI] (lower is better) | Fell for trap | Episodes |
+| --- | --- | --- | --- | --- |
+| 1 | *oracle (reference)* | 0.041 [0.036, 0.047] | 0.10 | 180 |
+| 2 | *scripted (reference)* | 0.050 [0.043, 0.058] | 0.12 | 180 |
+| 3 | *random (reference)* | 0.120 [0.107, 0.134] | 0.08 | 180 |
+<!-- leaderboard:end -->
+
 ## The idea in one paragraph
 
 An AI scientist is dropped into a lab studying cognitive control. Participants do a flanker task under different working-memory loads, with real or sham brain stimulation (tES) and EEG. Somewhere in the lab is a hidden causal mechanism: does load slow people down? Does stimulation help, only under high load, or not at all? Is that frontal-theta effect neural, or just blinks? The agent gets a pilot study (sometimes deliberately confounded), a budget of 30 participant-hours, and standard analysis tools. It must design experiments, analyse them, and submit a calibrated claim for every causal edge. Scoring is arithmetic against the hidden truth, with **no LLM judge anywhere**.
@@ -28,6 +42,7 @@ My [previous study](https://github.com/Project-Aletheia-org/aletheia-pressure-ev
 4. **A design-versus-analysis decomposition.** An ideal analyst re-analyses each agent's own data. This splits every failure into "ran the wrong experiment" and "misread the right one", which is the most actionable thing to know about an AI scientist.
 5. **Recall versus inference on real biology.** Axiom-Bio runs the same agents on real single cells, where comparing named and abstract labels measures how much a model knows versus how much it can infer.
 6. **A preregistered study that runs itself, for $0.** Hypotheses, metric and stopping rule were fixed before any model ran. Gates in code block model runs until the fit validates, reference agents order correctly and tasks are frozen. GitHub Actions runs local open-weight models every 6 hours, commits only real results, rebuilds the figures, animations and paper, and opens an issue if anything stalls.
+7. **It doesn't stop at the frozen set.** When the queue drains, the engine freezes a fresh *replication wave* of unseen tasks (seeds fixed in advance) to test whether rankings hold on new instances. A weekly intake adds the next open model, pinned to its registry digest. Each time the queue empties it cuts a versioned data release.
 
 ## What an episode looks like
 

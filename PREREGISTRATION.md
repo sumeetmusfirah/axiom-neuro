@@ -49,6 +49,13 @@ Seeds are added one at a time per (model, track, label) cell, across all tasks, 
 
 None. Parse failures and missing submissions are scored (unclaimed edges count as "absent, confidence 0.5"), not dropped. Episodes that crash are retried up to 3 times and then reported as failures.
 
+## Post-registration extensions (added 2026-10-26, before any wave was frozen or any model was added)
+
+These add work. They change nothing above, and all of it is reported as exploratory.
+
+- **R1 (replication waves):** After the primary queue empties, a fresh wave of 30 task instances (5 per type) is frozen every ≥ 28 days, up to 12 waves. Wave *n* uses seed `20261025 + 1000·n`. The scripted and oracle agents, and every model, run each wave once (seed 0) on the synthetic track with named and abstract labels. Report: per-agent Brier on each wave and pooled, and Kendall τ between the primary-set and pooled-wave rankings. Wave episodes are excluded from every preregistered analysis.
+- **Model intake:** Models beyond the original five are added from the candidate list in `configs/experiment.toml` (`[intake]`): at most one a week, only when fewer than 600 episodes are queued, pinned to their registry digest. They are run under the same protocol and stopping rule and reported in the tables, but excluded from H1–H6 and B1–B3.
+
 ## Deviations log
 
 - 2026-10-25 (before any LLM run): primary metric changed from exact match to Brier, after baseline simulations showed exact match is dominated by per-edge false positives of the ideal analyst (~8% per edge). Reason recorded in commit history.

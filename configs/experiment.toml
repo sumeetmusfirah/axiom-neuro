@@ -47,6 +47,36 @@ min_seeds = 3
 max_seeds = 10
 ci_halfwidth_target = 0.01
 
+[waves]
+# Replication waves (exploratory, R1). Once the primary queue is empty, a fresh set of task
+# instances is frozen every `min_days_between` days and every agent runs it once.
+# Wave n uses seed tasks.seed + 1000 * n, so wave contents are fixed by this file in advance.
+enabled = true
+instances_per_type = 5           # 30 tasks per wave
+tracks = ["synthetic"]
+labels = ["named", "abstract"]
+reference_agents = ["scripted", "oracle"]
+min_days_between = 28
+max_waves = 12
+
+[intake]
+# Model intake. Weekly, when fewer than `max_queue_episodes` episodes are queued, the next
+# candidate below that exists in the Ollama registry and fits on a free runner is appended to
+# [llm].models with its registry digest and the date. Added models are reported with a dagger
+# and excluded from the preregistered tests. Reorder or edit this list to steer the study.
+enabled = true
+max_queue_episodes = 600
+max_download_gb = 10.0
+candidates = [
+  { name = "phi4-mini:3.8b", params_b = 3.8 },
+  { name = "llama3.1:8b",    params_b = 8.0 },
+  { name = "qwen3:8b",       params_b = 8.2 },
+  { name = "granite3.3:8b",  params_b = 8.2 },
+  { name = "deepseek-r1:8b", params_b = 8.2 },
+  { name = "gemma3:12b",     params_b = 12.2 },
+  { name = "olmo2:13b",      params_b = 13.7 },
+]
+
 [automation]
 max_shards_per_run = 8
 max_parallel = 4                 # deliberately modest; see docs/ARCHITECTURE.md (Actions terms)

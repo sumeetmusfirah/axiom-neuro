@@ -28,6 +28,8 @@ jobs:
             fit=$(jq -r '.gates.fit_validated.passed' results/summary.json)
             src=$(jq -r '.gates.fit_validated.params_source' results/summary.json)
             [ "$fit" = "false" ] && [ "$src" != "default-unfitted" ] && problems="$problems\n- ERP CORE validation failed: the simulator does not match held-out participants. Nothing will run until fixed."
+            frozen=$(jq -r '.gates.tasks_frozen.passed' results/summary.json)
+            [ "$frozen" = "false" ] && problems="$problems\n- A task manifest no longer matches its committed hash. Nothing will run until fixed."
           fi
           [ -z "$problems" ] && { echo "healthy"; exit 0; }
           open=$(gh issue list --label watchdog --state open --json number --jq length)

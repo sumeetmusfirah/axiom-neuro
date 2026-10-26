@@ -1,0 +1,40 @@
+# Weekly: if the queue is running short, add the next candidate model from [intake] in
+# configs/experiment.toml, pinned to its registry digest, then start the engine.
+# Commits only when a model is actually added.
+name: intake
+on:
+  schedule:
+    - cron: "23 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: experiments-config
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e .
+      - id: intake
+        run: .venv/bin/axiom intake
+      - name: Commit and start the engine
+        if: steps.intake.outputs.added != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          .venv/bin/axiom report
+          git config user.name "axiom-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add configs/experiment.toml results/RESULTS.md results/summary.json README.md
+          git diff --cached --quiet && exit 0
+          git commit -m "config(intake): add ${{ steps.intake.outputs.added }} (digest ${{ steps.intake.outputs.digest }})"
+          for i in 1 2 3 4 5; do git pull --rebase && git push && break; sleep $((i * 10)); done
+          gh workflow run experiments.yml

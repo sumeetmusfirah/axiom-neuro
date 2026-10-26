@@ -252,7 +252,7 @@ def fig_validation():
 
 def build_all() -> list[str]:
     cfg = load_config()
-    rows = L.ok_rows(L.read_rows())
+    rows = L.ok_rows(L.primary(L.read_rows()))
     out = []
     for f in (fig_agents, fig_decomposition, fig_traps, fig_scale, fig_bio):
         out += f(rows, cfg)

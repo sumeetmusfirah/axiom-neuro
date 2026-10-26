@@ -19,6 +19,8 @@ from .params import REPO
 from .planner import make_plan
 
 RESULTS_MD = REPO / "results" / "RESULTS.md"
+README = REPO / "README.md"
+BOARD_START, BOARD_END = "<!-- leaderboard:start -->", "<!-- leaderboard:end -->"
 SUMMARY = REPO / "results" / "summary.json"
 
 
@@ -158,7 +160,8 @@ def _bio(rows: list[dict], models: list[str]) -> list[dict]:
 def hypotheses(cfg: dict, summ: dict, rows: list[dict] | None = None) -> list[dict]:
     """Automatic, conservative evaluation of PREREGISTRATION.md. 'pending' until data exist."""
     rows = rows or []
-    llm_models = [m["name"] for m in cfg["llm"]["models"]]
+    # Preregistered models only; later additions (marked `added`) are reported but not tested here.
+    llm_models = [m["name"] for m in cfg["llm"]["models"] if not m.get("added")]
     sizes = {m["name"]: m["params_b"] for m in cfg["llm"]["models"]}
     get = lambda a, t="synthetic", lab="named": summ.get(f"{a}|{t}|{lab}")
     res = []
@@ -202,6 +205,56 @@ def hypotheses(cfg: dict, summ: dict, rows: list[dict] | None = None) -> list[di
     return res + _bio(rows, llm_models)
 
 
+def replication(cfg: dict, rows: list[dict], summ: dict) -> dict:
+    """R1 (exploratory): primary-set Brier vs fresh replication waves, synthetic track, named labels."""
+    ok = [r for r in L.ok_rows(rows) if r.get("wave") and r["track"] == "synthetic" and r["labels"] == "named"]
+    waves = sorted({r["wave"] for r in ok})
+    table = []
+    for name in sorted({_cell_name(r) for r in ok}):
+        prim = summ.get(f"{name}|synthetic|named")
+        mine = [r for r in ok if _cell_name(r) == name]
+        per_wave = {w: boot_ci(_per_task([r for r in mine if r["wave"] == w], lambda r: r["scores"]["brier"]))[0]
+                    for w in waves}
+        pooled, lo, hi = boot_ci(_per_task(mine, lambda r: r["scores"]["brier"]))
+        table.append({"agent": name, "primary": prim["brier"] if prim else None, "waves": per_wave,
+                      "pooled": pooled, "pooled_lo": lo, "pooled_hi": hi})
+    both = [t for t in table if t["primary"] is not None and t["pooled"] is not None]
+    tau = None
+    if len(both) >= 4:
+        tau = float(stats.kendalltau([t["primary"] for t in both], [t["pooled"] for t in both])[0])
+    return {"waves": waves, "table": table, "kendall_tau": tau, "n_agents": len(both)}
+
+
+def leaderboard(cfg: dict, summ: dict) -> str:
+    added = {m["name"] for m in cfg["llm"]["models"] if m.get("added")}
+    sel = sorted((v for v in summ.values() if v["track"] == "synthetic" and v["labels"] == "named"
+                  and v["brier"] is not None), key=lambda v: v["brier"])
+    if not sel:
+        return "_No scored episodes yet._"
+    out = ["| # | Agent | Edge Brier [95% CI] (lower is better) | Fell for trap | Episodes |",
+           "| --- | --- | --- | --- | --- |"]
+    for i, v in enumerate(sel, 1):
+        name = v["agent"] + (" †" if v["agent"] in added else "")
+        if v["agent"] in ("random", "scripted", "oracle"):
+            name = f"*{name} (reference)*"
+        out.append(f"| {i} | {name} | {v['brier']:.3f} [{v['brier_lo']:.3f}, {v['brier_hi']:.3f}] "
+                   f"| {_f(v['trap_rate'])} | {v['n']} |")
+    if added & {v["agent"] for v in sel}:
+        out += ["", "† added after preregistration by model intake; not part of the preregistered tests."]
+    return "\n".join(out)
+
+
+def write_leaderboard(board: str, now: str, path=README) -> None:
+    if not path.exists():
+        return
+    text = path.read_text()
+    i, j = text.find(BOARD_START), text.find(BOARD_END)
+    if i < 0 or j < i:
+        return
+    body = f"{BOARD_START}\n_Axiom-Neuro, synthetic track, named labels. Data as of {now}._\n\n{board}\n"
+    path.write_text(text[:i] + body + text[j:])
+
+
 def _f(x, nd=2):
     return "–" if x is None or (isinstance(x, float) and np.isnan(x)) else f"{x:.{nd}f}"
 
@@ -209,9 +262,12 @@ def _f(x, nd=2):
 def build(rows: list[dict] | None = None) -> dict:
     cfg = load_config()
     rows = L.read_rows() if rows is None else rows
-    summ = summarize(rows)
+    prim = L.primary(rows)
+    summ = summarize(prim)
     plan = make_plan(cfg, rows)
-    hyp = hypotheses(cfg, summ, rows)
+    hyp = hypotheses(cfg, summ, prim)
+    rep = replication(cfg, rows, summ)
+    added = {m["name"] for m in cfg["llm"]["models"] if m.get("added")}
     n_ok = len(L.ok_rows(rows))
     n_err = sum(r["status"] == "error" for r in rows)
     # Stamp the data, not the clock: a run that adds nothing leaves the files byte-identical,
@@ -237,15 +293,37 @@ def build(rows: list[dict] | None = None) -> dict:
                "Fell for trap | Handled confound | Ideal analysis of own data | Train | Held-out |",
                "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
         for v in sorted(sel.values(), key=lambda v: v["brier"] if v["brier"] is not None else 9):
-            md.append(f"| {v['agent']} | {v['labels']} | {v['n']} | {_f(v['brier'], 3)} [{_f(v['brier_lo'], 3)}, {_f(v['brier_hi'], 3)}] "
+            md.append(f"| {v['agent']}{' †' if v['agent'] in added else ''} | {v['labels']} | {v['n']} | {_f(v['brier'], 3)} [{_f(v['brier_lo'], 3)}, {_f(v['brier_hi'], 3)}] "
                       f"| {_f(v['exact'])} | {_f(v['edge_acc'])} | {_f(v['confident_wrong'])} | {_f(v['trap_rate'])} "
                       f"| {_f(v['confound_handled'])} | {_f(v['ideal_on_own_data'])} | {_f(v['exact_train'])} | {_f(v['exact_heldout'])} |")
+    if added:
+        md += ["", "† Added after preregistration by model intake (see `configs/experiment.toml`, `[intake]`). "
+               "Reported, but excluded from the preregistered tests."]
     md += ["", "## Preregistered hypotheses (see PREREGISTRATION.md)", ""]
     for h in hyp:
         md.append(f"- **{h['id']}** ({h['status']}): {h.get('text') or 'waiting for data'}")
+    md += ["", "## Replication waves (exploratory, R1)", ""]
+    if rep["table"]:
+        ws = rep["waves"]
+        md += ["Fresh task instances from the same hypothesis family, frozen after the primary set finished. "
+               "Synthetic track, named labels, edge Brier.", "",
+               "| Agent | Primary set | " + " | ".join(f"Wave {w}" for w in ws) + " | All waves [95% CI] |",
+               "| --- | --- | " + " | ".join("---" for _ in ws) + " | --- |"]
+        for t in sorted(rep["table"], key=lambda t: t["pooled"] if t["pooled"] is not None else 9):
+            md.append(f"| {t['agent']} | {_f(t['primary'], 3)} | " + " | ".join(_f(t['waves'][w], 3) for w in ws)
+                      + f" | {_f(t['pooled'], 3)} [{_f(t['pooled_lo'], 3)}, {_f(t['pooled_hi'], 3)}] |")
+        if rep["kendall_tau"] is not None:
+            md += ["", f"Ranking agreement, primary set vs all waves: Kendall tau = {rep['kendall_tau']:.2f} "
+                   f"(n = {rep['n_agents']} agents)."]
+    else:
+        md.append("No wave has run yet. The first wave is frozen once the primary queue is empty.")
     RESULTS_MD.parent.mkdir(parents=True, exist_ok=True)
     RESULTS_MD.write_text("\n".join(md) + "\n")
+    write_leaderboard(leaderboard(cfg, summ), now)
+    # A data release is due whenever the queue drains: named by the data time, so it is deterministic.
+    release = f"results-{now[:10]}" if n_ok and not plan["n_pending_total"] and not plan["setup"] else None
     payload = {"generated": now, "episodes_ok": n_ok, "failed_attempts": n_err,
-               "queued": plan["n_pending_total"], "gates": plan["gates"], "cells": summ, "hypotheses": hyp}
+               "queued": plan["n_pending_total"], "gates": plan["gates"], "cells": summ, "hypotheses": hyp,
+               "replication": rep, "release_tag": release}
     SUMMARY.write_text(json.dumps(payload, indent=2, default=str))
     return payload

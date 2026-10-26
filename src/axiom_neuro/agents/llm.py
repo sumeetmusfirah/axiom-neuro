@@ -57,6 +57,15 @@ class OllamaClient:
         if not self.host.startswith("http"):
             self.host = "http://" + self.host
 
+    def digest(self) -> str | None:
+        """The exact weights being run, so every ledger row names the model build it used."""
+        try:
+            with urllib.request.urlopen(f"{self.host}/api/tags", timeout=30) as r:
+                tags = json.loads(r.read())["models"]
+        except (urllib.error.URLError, OSError, KeyError, ValueError):
+            return None
+        return next((m.get("digest") for m in tags if m.get("name") == self.model), None)
+
     def chat(self, messages: list[dict], seed: int, actions=ACTIONS) -> str:
         body = {
             "model": self.model,

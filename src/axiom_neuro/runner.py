@@ -45,6 +45,16 @@ def _llm_client(item, cfg, client_factory):
         m, llm["temperature"], llm["num_predict"], llm["request_timeout_s"])))(item["model"])
 
 
+_DIGESTS: dict[str, str | None] = {}
+
+
+def _digest(client) -> str | None:
+    model = getattr(client, "model", None)
+    if model not in _DIGESTS:
+        _DIGESTS[model] = client.digest() if hasattr(client, "digest") else None
+    return _DIGESTS[model]
+
+
 def _save_transcript(item, extra, actions) -> str:
     h = hashlib.sha1(item["key"].encode()).hexdigest()[:16]
     out = TRANSCRIPTS / item["model"].replace(":", "_") / f"{h}.json.gz"
@@ -63,7 +73,9 @@ def run_bio_item(item: dict, task, cfg: dict, client_factory=None) -> dict:
     elif item["agent"] == "scripted":
         BL.run_scripted(env, item["seed"])
     elif item["agent"] == "llm":
-        extra = run_llm(env, _llm_client(item, cfg, client_factory), item["seed"], cfg["llm"]["max_turns"])
+        client = _llm_client(item, cfg, client_factory)
+        extra = run_llm(env, client, item["seed"], cfg["llm"]["max_turns"])
+        extra["model_digest"] = _digest(client)
     else:
         raise ValueError(f"agent {item['agent']} not available in the bio lab")
     s = BL.score_bio(env.episode.submitted, task)
@@ -74,7 +86,7 @@ def run_bio_item(item: dict, task, cfg: dict, client_factory=None) -> dict:
            "edge_kinds": task.kinds}
     if item["agent"] == "llm":
         row.update({"turns": extra["turns"], "parse_failures": extra["parse_failures"],
-                    "submitted": extra["submitted"],
+                    "submitted": extra["submitted"], "model_digest": extra["model_digest"],
                     "transcript": _save_transcript(item, extra, env.episode.actions)})
     return row
 
@@ -91,7 +103,9 @@ def run_item(item: dict, task, params, cfg: dict, client_factory=None) -> dict:
     elif item["agent"] == "oracle":
         B.run_oracle(env, item["seed"])
     elif item["agent"] == "llm":
-        extra = run_llm(env, _llm_client(item, cfg, client_factory), item["seed"], cfg["llm"]["max_turns"])
+        client = _llm_client(item, cfg, client_factory)
+        extra = run_llm(env, client, item["seed"], cfg["llm"]["max_turns"])
+        extra["model_digest"] = _digest(client)
     else:
         raise ValueError(f"unknown agent {item['agent']}")
 
@@ -111,7 +125,7 @@ def run_item(item: dict, task, params, cfg: dict, client_factory=None) -> dict:
     }
     if item["agent"] == "llm":
         row.update({"turns": extra["turns"], "parse_failures": extra["parse_failures"],
-                    "submitted": extra["submitted"]})
+                    "submitted": extra["submitted"], "model_digest": extra["model_digest"]})
         row["transcript"] = _save_transcript(item, extra, env.episode.actions)
     return row
 
@@ -124,6 +138,9 @@ def run_shard(plan: dict, shard: int, out_path: Path, budget_min: float, cfg: di
     if any(it.get("domain") == "bio" for s in plan["shards"] for it in s["items"]):
         from .bio.lab import load_bio_tasks
         tasks.update({t.task_id: t for t in load_bio_tasks()})
+    if any(it.get("wave") for s in plan["shards"] for it in s["items"]):
+        from .waves import wave_tasks
+        tasks.update({t.task_id: t for ts in wave_tasks().values() for t in ts})
     sh = next(s for s in plan["shards"] if s["shard"] == shard)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_sha = MANIFEST_SHA.read_text().strip() if MANIFEST_SHA.exists() else None
@@ -137,6 +154,8 @@ def run_shard(plan: dict, shard: int, out_path: Path, budget_min: float, cfg: di
             started = time.monotonic()
             base = {k: item[k] for k in ("key", "task_id", "agent", "model", "track", "labels", "seed")}
             t = tasks[item["task_id"]]
+            if item.get("wave"):
+                base["wave"] = item["wave"]
             base.update({"domain": item.get("domain", "neuro"), "task_type": t.task_type,
                          "split": t.split if item.get("domain") == "bio" else TASK_TYPES[t.task_type].split,
                          "attempt_id": uuid.uuid4().hex[:12],

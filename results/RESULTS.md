@@ -46,3 +46,7 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-10-26T00:00:13.17135
 - **B1** (pending): waiting for data
 - **B2** (pending): waiting for data
 - **B3** (pending): waiting for data
+
+## Replication waves (exploratory, R1)
+
+No wave has run yet. The first wave is frozen once the primary queue is empty.

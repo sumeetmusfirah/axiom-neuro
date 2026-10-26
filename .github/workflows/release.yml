@@ -1,0 +1,36 @@
+# Whenever the queue drains (primary set, a replication wave, or a newly added model),
+# publish a versioned data release: ledger, summary and results report as assets.
+# The tag is named by the data time, so re-running this never duplicates a release.
+name: release
+on:
+  workflow_run:
+    workflows: [experiments]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e .
+      - id: notes
+        run: .venv/bin/axiom release-notes --out release-notes.md
+      - name: Publish release
+        if: steps.notes.outputs.tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.notes.outputs.tag }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 && { echo "$TAG already released"; exit 0; }
+          gzip -9 -c results/ledger.jsonl > ledger.jsonl.gz
+          gh release create "$TAG" --target main --title "$TAG" --notes-file release-notes.md \
+            ledger.jsonl.gz results/summary.json results/RESULTS.md

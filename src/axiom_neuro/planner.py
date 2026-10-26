@@ -5,6 +5,8 @@ Order of work:
   baselines random / scripted / oracle on every task and track
   llm       every model x track x label, one seed at a time across all tasks;
             seeds keep being added to a cell until its Brier-score 95% CI is tight enough
+  waves     once the above is empty: a fresh task wave is frozen on schedule and every
+            agent runs on it once (see waves.py)
 """
 
 from __future__ import annotations
@@ -16,6 +18,7 @@ from collections import defaultdict
 import numpy as np
 
 from . import ledger as L
+from . import waves as W
 from .agents.baselines import ORACLE_CACHE
 from .params import FITTED_PATH, load_params
 from .tasks import is_frozen, load_tasks
@@ -59,8 +62,8 @@ def gates(cfg: dict, rows: list[dict]) -> dict:
     out = {
         "fit_validated": {"passed": (p.validation_passed or not g["require_fit_validated"]),
                           "params_source": p.source},
-        "tasks_frozen": {"passed": is_frozen() or not g["require_frozen_tasks"]},
-        "baseline_order": baseline_gate(rows),
+        "tasks_frozen": {"passed": (is_frozen() and W.all_frozen()) or not g["require_frozen_tasks"]},
+        "baseline_order": baseline_gate(L.primary(rows)),
     }
     if not g["require_baseline_order"]:
         out["baseline_order"]["passed"] = True
@@ -104,11 +107,13 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
                         items.append({"key": k, "task_id": t.task_id, "agent": agent, "model": "none",
                                       "track": "sachs", "labels": "named", "seed": seed, "est_min": 0.1,
                                       "domain": "bio"})
-    if items or not g["baseline_order"]["passed"]:
+    if not g["baseline_order"]["passed"]:
         return items, g
+    if items:
+        return items + W.pending(cfg, rows, done), g
 
     sc = cfg["seeds"]
-    ok = L.ok_rows(rows)
+    ok = L.ok_rows(L.primary(rows))
     cells = [(track, tasks, "neuro") for track in tracks] + ([("sachs", bio_tasks, "bio")] if bio_on else [])
     for m in cfg["llm"]["models"]:
         for track, track_tasks, domain in cells:
@@ -125,7 +130,7 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
                     if seed + 1 >= sc["min_seeds"] and \
                             _halfwidth([r["scores"]["brier"] for r in cell]) <= sc["ci_halfwidth_target"]:
                         break  # precise enough: stop adding seeds to this cell
-    return items, g
+    return items + W.pending(cfg, rows, done), g
 
 
 def make_plan(cfg: dict, rows: list[dict]) -> dict:
@@ -158,9 +163,14 @@ def make_plan(cfg: dict, rows: list[dict]) -> dict:
                 ordered.append(queues[m].pop(0))
     for i, s in enumerate(ordered):
         s["shard"] = i
+    n_wave = sum(1 for it in items if it.get("wave"))
+    setup = setup_needed(cfg)
+    if not setup and g["baseline_order"]["passed"] and W.due(cfg, len(items) - n_wave, n_wave) is not None:
+        setup.append("wave")
     return {
         "gates": g,
-        "setup": setup_needed(cfg),
+        "setup": setup,
+        "n_pending_wave": n_wave,
         "n_pending_total": len(items),
         "shards": ordered,
         "matrix": [{"shard": s["shard"], "model": s["model"]} for s in ordered],

@@ -14,6 +14,8 @@ src/axiom_neuro/
   agents/llm.py              local LLM via Ollama, schema-constrained JSON actions
   scoring.py                 judge-free scoring against ground truth
   tasks.py                   deterministic task set, freeze + hash
+  waves.py                   replication waves: fresh task sets frozen on a schedule once the queue drains
+  intake.py                  model intake: next candidate model, checked against the Ollama registry, digest-pinned
   ledger.py                  append-only results, idempotent by key
   planner.py                 gates, work queue, adaptive seeds, sharding
   runner.py                  run one shard under a wall-clock budget
@@ -23,6 +25,8 @@ src/axiom_neuro/
   ci.yml                     tests + smoke on every push
   experiments.yml            every 6h: plan -> setup | shards -> collect -> report -> commit
   site.yml                   after each run: figures, animations, paper PDF -> GitHub Pages
+  intake.yml                 weekly: add the next candidate model when the queue is short, then start the engine
+  release.yml                after each run: if the queue drained, publish a versioned data release
   watchdog.yml               daily: opens an issue if runs stall or a gate fails
 ```
 
@@ -36,14 +40,37 @@ cron (6h) ──> plan ──┬─ setup needed? ──> fit ERP CORE ─> orac
                                          collect ─> ledger.jsonl ─> RESULTS.md ─> commit (only if new rows)
                                               ▼
                                          site: figures + animations + paper PDF ─> Pages
+                                         release: queue empty? ─> tag results-<date> with the ledger
 ```
+
+## How it keeps going
+
+The primary study is finite by design: the stopping rule closes every cell. Three loops feed it new, legitimate work afterwards, each of them a scientific step and not just activity:
+
+```
+            ┌──────────── primary queue empty ────────────┐
+            ▼                                             │
+  every 28 days: freeze replication wave n ──> all agents run it once ──> R1 table in RESULTS.md
+  (seed = tasks.seed + 1000·n, fixed in advance)                          (do rankings hold on unseen tasks?)
+
+  weekly intake: queue < 600? ──> next [intake] candidate in the registry, ≤ 10 GB
+                                  ──> appended to [llm].models with digest + date ──> engine queues it
+                                      on the primary set and every frozen wave
+
+  each drained queue ──> GitHub release results-<data date>: ledger.jsonl.gz, summary.json, RESULTS.md
+```
+
+- **Waves never touch the preregistered results.** Wave rows carry `wave = n`. `ledger.primary()` filters them out of every preregistered analysis, figure and paper table, and they appear only in the exploratory R1 section.
+- **Added models never touch the preregistered tests.** They carry `added = <date>`, appear in the tables with a dagger, and are excluded from H1–H6 and B1–B3.
+- **Every model row names its weights.** The runner records the Ollama digest of the model it actually ran (`model_digest`), and intake pins the registry digest in the config.
+- **Bounded.** At most `max_waves` waves, at most one model per week, `max_parallel` jobs. Set `enabled = false` under `[waves]` or `[intake]` to stop either loop.
 
 ## Why it keeps running and when it stops
 
 - **Resumable by construction.** Work is the set difference between what the config asks for and what the ledger holds. A killed job loses only the episode in flight; the next run re-plans it.
 - **Idempotent.** Every attempt has a unique id; collecting twice adds nothing. Crashes are logged and retried up to 3 times.
 - **Gated.** `plan` refuses to queue model runs until the ERP CORE fit validates, the reference agents order correctly and the task manifest matches its hash.
-- **Self-terminating.** The adaptive seed rule stops each cell when its primary-metric CI is tight enough. When nothing is left, runs become no-ops and make no commits.
+- **Self-terminating, then self-renewing.** The adaptive seed rule stops each cell when its primary-metric CI is tight enough. When nothing is left, runs make no commits until the next wave or intake adds real work (see above).
 - **Extensible.** Add a model to `configs/experiment.toml` and the next run queues it. Nothing else changes.
 - **No empty commits.** Reports stamp the latest data time, not the clock, so a run with no new data leaves the tree byte-identical.
 

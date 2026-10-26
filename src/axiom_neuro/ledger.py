@@ -38,6 +38,11 @@ def ok_rows(rows: list[dict]) -> list[dict]:
     return list(seen.values())
 
 
+def primary(rows: list[dict]) -> list[dict]:
+    """The preregistered study only. Replication-wave rows (``wave`` >= 1) are analysed separately."""
+    return [r for r in rows if not r.get("wave")]
+
+
 def collect(incoming: Path = INCOMING, path: Path = LEDGER) -> int:
     """Merge shard outputs into the ledger. Returns number of new rows."""
     rows = read_rows(path)

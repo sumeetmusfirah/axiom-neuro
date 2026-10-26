@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use Axiom-Neuro, please cite it as below."
+title: "Axiom-Neuro: Do Language Models Design and Analyse Experiments Like Scientists?"
+type: software
+authors:
+  - family-names: Musfirah
+    given-names: Sumeet
+repository-code: "https://github.com/sumeetmusfirah/axiom-neuro"
+url: "https://sumeetmusfirah.github.io/axiom-neuro/"
+license: MIT
+date-released: "2026-10-25"
+keywords:
+  - AI scientist
+  - benchmark
+  - causal discovery
+  - EEG
+  - ERP CORE
+  - experimental design
+  - language models

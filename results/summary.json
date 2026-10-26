@@ -232,5 +232,12 @@
       "status": "pending",
       "text": null
     }
-  ]
+  ],
+  "replication": {
+    "waves": [],
+    "table": [],
+    "kendall_tau": null,
+    "n_agents": 0
+  },
+  "release_tag": null
 }

@@ -55,6 +55,64 @@ def cmd_freeze(a):
     return 0
 
 
+def cmd_freeze_wave(a):
+    from . import waves as W
+    from .planner import pending_items
+    cfg = load_config()
+    rows = L.read_rows()
+    items, _ = pending_items(cfg, rows)
+    n_wave = sum(1 for it in items if it.get("wave"))
+    nxt = a.wave or W.due(cfg, len(items) - n_wave, n_wave)
+    if nxt is None:
+        print("no wave due")
+        return 0
+    print(json.dumps(W.freeze_wave(cfg, nxt)))
+    return 0
+
+
+def cmd_intake(a):
+    from .intake import add_to_config, model_line, next_candidate
+    from .planner import pending_items
+    cfg = load_config()
+    items, _ = pending_items(cfg, L.read_rows())
+    pick = next_candidate(cfg, len(items))
+    if pick is None:
+        print(f"no model added ({len(items)} episodes queued)")
+        return 0
+    c, meta = pick
+    line = model_line(c, meta)
+    print(f"adding {c['name']} ({meta['gb']} GB, digest {meta['digest'][:12]})")
+    if not a.dry_run:
+        add_to_config(line)
+    gh = os.environ.get("GITHUB_OUTPUT")
+    if gh and not a.dry_run:
+        with open(gh, "a") as f:
+            f.write(f"added={c['name']}\ndigest={meta['digest'][:12]}\n")
+    return 0
+
+
+def cmd_release_notes(a):
+    """Print the pending data-release tag (empty if none) and write its notes."""
+    s = json.loads((L.LEDGER.parent / "summary.json").read_text())
+    tag = s.get("release_tag") or ""
+    if tag:
+        board = (L.LEDGER.parent.parent / "README.md").read_text()
+        i, j = board.find("<!-- leaderboard:start -->"), board.find("<!-- leaderboard:end -->")
+        waves = s.get("replication", {}).get("waves", [])
+        Path(a.out).write_text(
+            f"Data release: the queue drained at {s['generated']}.\n\n"
+            f"- {s['episodes_ok']} scored episodes, {s['failed_attempts']} failed attempts logged\n"
+            f"- Replication waves completed: {', '.join(map(str, waves)) or 'none yet'}\n"
+            f"- Ledger, summary and results report attached; paper PDF and figures on the project page\n\n"
+            + (board[i + len("<!-- leaderboard:start -->"):j].strip() if i >= 0 else "") + "\n")
+    print(tag)
+    gh = os.environ.get("GITHUB_OUTPUT")
+    if gh:
+        with open(gh, "a") as f:
+            f.write(f"tag={tag}\n")
+    return 0
+
+
 def cmd_plan(a):
     from .planner import make_plan
     plan = make_plan(load_config(), L.read_rows())
@@ -132,6 +190,10 @@ def main(argv=None) -> int:
     s.add_argument("--plan", default="plan.json"); s.add_argument("--shard", type=int, required=True)
     s.add_argument("--out", required=True); s.add_argument("--budget-min", type=float, default=320)
     s.set_defaults(f=cmd_run)
+    s = sub.add_parser("freeze-wave"); s.add_argument("--wave", type=int); s.set_defaults(f=cmd_freeze_wave)
+    s = sub.add_parser("intake"); s.add_argument("--dry-run", action="store_true"); s.set_defaults(f=cmd_intake)
+    s = sub.add_parser("release-notes"); s.add_argument("--out", default="release-notes.md")
+    s.set_defaults(f=cmd_release_notes)
     sub.add_parser("collect").set_defaults(f=cmd_collect)
     sub.add_parser("report").set_defaults(f=cmd_report)
     s = sub.add_parser("figures"); s.add_argument("--no-animations", action="store_true"); s.set_defaults(f=cmd_figures)

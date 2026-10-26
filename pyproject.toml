@@ -1,0 +1,33 @@
+[project]
+name = "axiom-neuro"
+version = "0.1.0"
+description = "A simulated cognitive-control lab, fitted to real EEG data, for evaluating AI scientists"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+# Only the ERP CORE fit job needs these (heavy; not installed for experiment runs).
+fit = [
+    "mne>=1.6",
+    "pymatreader>=0.0.32",
+    "hu-neuro-pipeline>=0.8",
+]
+viz = ["matplotlib>=3.8", "pillow>=10"]
+dev = ["pytest>=8", "matplotlib>=3.8", "pillow>=10"]
+
+[project.scripts]
+axiom = "axiom_neuro.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/axiom_neuro"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

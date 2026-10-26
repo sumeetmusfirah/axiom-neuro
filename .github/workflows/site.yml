@@ -1,0 +1,51 @@
+# Rebuild figures, animations, the paper PDF and the project page whenever results land.
+# Deploys to GitHub Pages; nothing is committed, so the repo history stays results-only.
+name: site
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: [experiments]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e ".[viz]"
+      - run: .venv/bin/axiom report && .venv/bin/axiom figures && .venv/bin/axiom paper-tables
+      - name: Build paper PDF (tectonic, free)
+        run: |
+          curl -fsSL https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.15.0/tectonic-0.15.0-x86_64-unknown-linux-musl.tar.gz | tar xz
+          sudo mv tectonic /usr/local/bin/
+          mkdir -p paper/figures && cp site/figures/*.pdf paper/figures/ 2>/dev/null || true
+          cd paper && tectonic --keep-intermediates main.tex && cp main.pdf ../site/axiom-neuro.pdf
+          tar czf ../site/arxiv-source.tar.gz main.tex main.bbl refs.bib generated figures
+      - run: cp results/RESULTS.md site/ && cp results/summary.json site/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

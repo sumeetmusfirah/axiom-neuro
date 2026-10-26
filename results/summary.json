@@ -1,0 +1,236 @@
+{
+  "generated": "2026-10-26T00:00:13.171356+00:00",
+  "episodes_ok": 1320,
+  "failed_attempts": 12,
+  "queued": 1600,
+  "gates": {
+    "fit_validated": {
+      "passed": true,
+      "params_source": "erpcore-ern"
+    },
+    "tasks_frozen": {
+      "passed": true
+    },
+    "baseline_order": {
+      "passed": true,
+      "metric": "brier (lower is better)",
+      "means": {
+        "oracle": 0.0408,
+        "random": 0.1202,
+        "scripted": 0.0499
+      }
+    }
+  },
+  "cells": {
+    "oracle|semisynthetic|named": {
+      "agent": "oracle",
+      "track": "semisynthetic",
+      "labels": "named",
+      "n": 180,
+      "exact": 0.7666666666666668,
+      "exact_lo": 0.7055555555555555,
+      "exact_hi": 0.8222222222222223,
+      "edge_acc": 0.9574074074074073,
+      "brier": 0.043899647203703714,
+      "brier_lo": 0.038577387437500006,
+      "brier_hi": 0.049304435519675914,
+      "confident_wrong": 0.03333333333333333,
+      "trap_rate": 0.18333333333333332,
+      "confound_handled": 1.0,
+      "ideal_on_own_data": 0.7666666666666667,
+      "exact_train": 0.75,
+      "exact_heldout": 0.8,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "oracle|synthetic|named": {
+      "agent": "oracle",
+      "track": "synthetic",
+      "labels": "named",
+      "n": 180,
+      "exact": 0.8222222222222222,
+      "exact_lo": 0.7666666666666665,
+      "exact_hi": 0.8777777777777777,
+      "edge_acc": 0.9657407407407408,
+      "brier": 0.04082614594444445,
+      "brier_lo": 0.03557323291851852,
+      "brier_hi": 0.046648480070138894,
+      "confident_wrong": 0.022222222222222223,
+      "trap_rate": 0.1,
+      "confound_handled": 1.0,
+      "ideal_on_own_data": 0.8222222222222222,
+      "exact_train": 0.8083333333333333,
+      "exact_heldout": 0.85,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "random|sachs|named": {
+      "agent": "random",
+      "track": "sachs",
+      "labels": "named",
+      "n": 120,
+      "exact": 0.0,
+      "exact_lo": 0.0,
+      "exact_hi": 0.0,
+      "edge_acc": 0.575,
+      "brier": 0.27445833333333336,
+      "brier_lo": 0.2601836805555556,
+      "brier_hi": 0.28805659722222227,
+      "confident_wrong": 1.5,
+      "trap_rate": 0.38333333333333336,
+      "confound_handled": null,
+      "ideal_on_own_data": 0.0,
+      "exact_train": 0.0,
+      "exact_heldout": NaN,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "random|semisynthetic|named": {
+      "agent": "random",
+      "track": "semisynthetic",
+      "labels": "named",
+      "n": 180,
+      "exact": 0.5666666666666667,
+      "exact_lo": 0.4777777777777778,
+      "exact_hi": 0.6499999999999999,
+      "edge_acc": 0.9055555555555554,
+      "brier": 0.09845970565740741,
+      "brier_lo": 0.08699191416689815,
+      "brier_hi": 0.11058400805439814,
+      "confident_wrong": 0.14444444444444443,
+      "trap_rate": 0.08333333333333333,
+      "confound_handled": 0.6916666666666667,
+      "ideal_on_own_data": 0.5666666666666667,
+      "exact_train": 0.5416666666666666,
+      "exact_heldout": 0.6166666666666667,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "random|synthetic|named": {
+      "agent": "random",
+      "track": "synthetic",
+      "labels": "named",
+      "n": 180,
+      "exact": 0.45555555555555555,
+      "exact_lo": 0.3777777777777778,
+      "exact_hi": 0.5333333333333333,
+      "edge_acc": 0.8703703703703705,
+      "brier": 0.1202404178148148,
+      "brier_lo": 0.1065536519111111,
+      "brier_hi": 0.13427527992708335,
+      "confident_wrong": 0.31666666666666665,
+      "trap_rate": 0.08333333333333333,
+      "confound_handled": 0.6916666666666667,
+      "ideal_on_own_data": 0.45555555555555555,
+      "exact_train": 0.49166666666666664,
+      "exact_heldout": 0.38333333333333336,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "scripted|sachs|named": {
+      "agent": "scripted",
+      "track": "sachs",
+      "labels": "named",
+      "n": 120,
+      "exact": 0.0,
+      "exact_lo": 0.0,
+      "exact_hi": 0.0,
+      "edge_acc": 0.6166666666666667,
+      "brier": 0.2764375,
+      "brier_lo": 0.2546717881944444,
+      "brier_hi": 0.29962664930555555,
+      "confident_wrong": 1.6833333333333333,
+      "trap_rate": 0.25833333333333336,
+      "confound_handled": null,
+      "ideal_on_own_data": 0.0,
+      "exact_train": 0.0,
+      "exact_heldout": NaN,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "scripted|semisynthetic|named": {
+      "agent": "scripted",
+      "track": "semisynthetic",
+      "labels": "named",
+      "n": 180,
+      "exact": 0.7555555555555556,
+      "exact_lo": 0.6944444444444444,
+      "exact_hi": 0.8111111111111112,
+      "edge_acc": 0.9574074074074075,
+      "brier": 0.04877503950000001,
+      "brier_lo": 0.04442696080578704,
+      "brier_hi": 0.053092204579861114,
+      "confident_wrong": 0.03333333333333333,
+      "trap_rate": 0.15,
+      "confound_handled": 1.0,
+      "ideal_on_own_data": 0.7555555555555555,
+      "exact_train": 0.7666666666666667,
+      "exact_heldout": 0.7333333333333333,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "scripted|synthetic|named": {
+      "agent": "scripted",
+      "track": "synthetic",
+      "labels": "named",
+      "n": 180,
+      "exact": 0.7444444444444441,
+      "exact_lo": 0.6666666666666665,
+      "exact_hi": 0.8111111111111111,
+      "edge_acc": 0.9527777777777777,
+      "brier": 0.04990591209259258,
+      "brier_lo": 0.04305252360532407,
+      "brier_hi": 0.057928340477777764,
+      "confident_wrong": 0.06111111111111111,
+      "trap_rate": 0.11666666666666667,
+      "confound_handled": 1.0,
+      "ideal_on_own_data": 0.7444444444444445,
+      "exact_train": 0.7083333333333334,
+      "exact_heldout": 0.8166666666666667,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    }
+  },
+  "hypotheses": [
+    {
+      "id": "H1",
+      "status": "pending"
+    },
+    {
+      "id": "H2",
+      "status": "pending"
+    },
+    {
+      "id": "H3",
+      "status": "pending",
+      "text": null
+    },
+    {
+      "id": "H4",
+      "status": "pending"
+    },
+    {
+      "id": "H5",
+      "status": "pending"
+    },
+    {
+      "id": "H6",
+      "status": "pending",
+      "text": null
+    },
+    {
+      "id": "B1",
+      "status": "pending"
+    },
+    {
+      "id": "B2",
+      "status": "pending",
+      "text": null
+    },
+    {
+      "id": "B3",
+      "status": "pending",
+      "text": null
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+# Daily: if the engine has stalled or a gate has failed, open an issue (once) so a human looks.
+name: watchdog
+on:
+  schedule:
+    - cron: "41 9 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          problems=""
+          last=$(gh run list --workflow experiments.yml --limit 4 --json conclusion --jq '[.[].conclusion] | map(select(. != "")) | .[0:3] | join(",")')
+          case "$last" in failure,failure,failure*) problems="$problems\n- The last 3 experiment runs failed: $last";; esac
+          ok=$(gh run list --workflow experiments.yml --limit 20 --json conclusion,createdAt \
+               --jq "[.[] | select(.conclusion==\"success\" and (.createdAt | fromdateiso8601) > (now - 172800))] | length")
+          [ "$ok" = "0" ] && problems="$problems\n- No successful experiment run in 48 hours."
+          if [ -f results/summary.json ]; then
+            fit=$(jq -r '.gates.fit_validated.passed' results/summary.json)
+            src=$(jq -r '.gates.fit_validated.params_source' results/summary.json)
+            [ "$fit" = "false" ] && [ "$src" != "default-unfitted" ] && problems="$problems\n- ERP CORE validation failed: the simulator does not match held-out participants. Nothing will run until fixed."
+          fi
+          [ -z "$problems" ] && { echo "healthy"; exit 0; }
+          open=$(gh issue list --label watchdog --state open --json number --jq length)
+          [ "$open" != "0" ] && { echo "issue already open"; exit 0; }
+          gh label create watchdog --color B60205 2>/dev/null || true
+          printf "Automated check found:\n$problems\n\nSee the Actions tab for logs." | \
+            gh issue create --title "Watchdog: experiment engine needs attention" --label watchdog --body-file -

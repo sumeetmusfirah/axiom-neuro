@@ -1,0 +1,25 @@
+{
+  "source": "Zenodo 7681811 GroundTruth.csv (Sachs et al. 2005 consensus)",
+  "edges": [
+    "Mek->Erk",
+    "PIP2->PKC",
+    "PIP3->Akt",
+    "PIP3->PIP2",
+    "PIP3->PKA",
+    "PIP3->Plcg",
+    "PKA->Akt",
+    "PKA->Erk",
+    "PKA->Jnk",
+    "PKA->Mek",
+    "PKA->P38",
+    "PKA->PIP3",
+    "PKA->Raf",
+    "PKC->Jnk",
+    "PKC->Mek",
+    "PKC->P38",
+    "PKC->Raf",
+    "Plcg->PIP2",
+    "Plcg->PKC",
+    "Raf->Mek"
+  ]
+}

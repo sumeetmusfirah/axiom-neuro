@@ -1,0 +1,131 @@
+# The engine. Every 6 hours: plan what is left -> run it in parallel shards -> merge -> report -> commit.
+# Self-resuming: every episode is written as it finishes; anything unfinished is re-planned next run.
+# Self-limiting: gates in `axiom plan` block work until the fit, baselines and task freeze are in order,
+# and the adaptive seed rule stops a cell once its result is precise enough.
+name: experiments
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: experiments
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      has_work: ${{ steps.plan.outputs.has_work }}
+      setup: ${{ steps.plan.outputs.setup }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e .
+      - id: plan
+        run: .venv/bin/axiom plan --out plan.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plan
+          path: plan.json
+
+  # One-time setup, run automatically when missing: fit ERP CORE -> oracle designs -> freeze tasks.
+  setup:
+    needs: plan
+    if: needs.plan.outputs.setup != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e ".[fit]"
+      - name: Fit simulator to ERP CORE (validation result is committed either way)
+        if: contains(needs.plan.outputs.setup, 'fit')
+        run: .venv/bin/axiom fit-erpcore || echo "::warning::ERP CORE validation failed; gates will hold all runs"
+      - name: Simulation-optimal oracle designs
+        if: contains(needs.plan.outputs.setup, 'oracle') || contains(needs.plan.outputs.setup, 'fit')
+        run: .venv/bin/axiom oracle
+      - name: Freeze task set
+        if: contains(needs.plan.outputs.setup, 'freeze')
+        run: .venv/bin/axiom freeze
+      - name: Bio lab (fetch Sachs cells, freeze bio tasks)
+        if: contains(needs.plan.outputs.setup, 'bio')
+        run: .venv/bin/axiom bio-setup
+      - run: .venv/bin/axiom report
+      - name: Commit setup outputs
+        run: |
+          git config user.name "axiom-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ results/oracle_designs.json results/RESULTS.md results/summary.json tasks/
+          git diff --cached --quiet && exit 0
+          git commit -m "setup: ${{ needs.plan.outputs.setup }} (run ${{ github.run_id }})"
+          for i in 1 2 3 4 5; do git pull --rebase && git push && exit 0; sleep $((i * 10)); done; exit 1
+
+  run:
+    needs: plan
+    if: needs.plan.outputs.has_work == 'true' && needs.plan.outputs.setup == ''
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    # Default: free GitHub-hosted runner. Set repo variable AXIOM_RUNNER=self-hosted to use your own machine.
+    runs-on: ${{ vars.AXIOM_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e .
+      - uses: actions/download-artifact@v4
+        with:
+          name: plan
+      - name: Start Ollama and pull ${{ matrix.model }}
+        if: matrix.model != 'none'
+        run: |
+          command -v ollama || curl -fsSL https://ollama.com/install.sh | sh
+          curl -sf http://127.0.0.1:11434/api/tags >/dev/null || (nohup ollama serve >/tmp/ollama.log 2>&1 &)
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:11434/api/tags >/dev/null && break; sleep 2; done
+          ollama pull "${{ matrix.model }}"
+      - name: Run shard ${{ matrix.shard }}
+        run: |
+          .venv/bin/axiom run --plan plan.json --shard ${{ matrix.shard }} --budget-min 320 \
+            --out results/incoming/${{ github.run_id }}-${{ matrix.shard }}.jsonl
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shard-${{ matrix.shard }}
+          path: |
+            results/incoming/
+            results/transcripts/
+          if-no-files-found: ignore
+
+  collect:
+    needs: [plan, run]
+    if: always() && needs.plan.result == 'success' && needs.plan.outputs.has_work == 'true' && needs.plan.outputs.setup == ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e .
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: shard-*
+          path: results/
+          merge-multiple: true
+      - run: .venv/bin/axiom collect && .venv/bin/axiom report
+      - name: Commit results (only when there is new data)
+        run: |
+          git config user.name "axiom-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -rf results/incoming
+          git add results/
+          git diff --cached --quiet && { echo "no new results"; exit 0; }
+          n=$(git diff --cached --numstat results/ledger.jsonl | awk '{print $1}')
+          git commit -m "results: +${n:-0} ledger rows (run ${{ github.run_id }})"
+          for i in 1 2 3 4 5; do git pull --rebase && git push && exit 0; sleep $((i * 10)); done; exit 1

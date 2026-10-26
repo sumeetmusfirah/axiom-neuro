@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Axiom-Neuro</title>
+<meta name="description" content="Do language models design and analyse experiments like scientists? A cognitive-control lab with known ground truth, fitted to real human EEG.">
+<style>
+  :root {
+    --bg: #fcfcfb; --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --rule: #e4e3df;
+    --accent: #2a78d6; --accent-2: #eb6834; --chip: #f0efec;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161615; --surface: #1d1d1c; --ink: #f4f3ee; --ink-2: #c3c2b7; --rule: #383835;
+      --accent: #3987e5; --accent-2: #d95926; --chip: #2a2a28;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161615; --surface: #1d1d1c; --ink: #f4f3ee; --ink-2: #c3c2b7; --rule: #383835;
+    --accent: #3987e5; --accent-2: #d95926; --chip: #2a2a28;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 var(--serif); }
+  main { max-width: 760px; margin: 0 auto; padding: 56px 16px 96px; }
+  header .kicker { font: 600 13px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font: 600 clamp(30px, 5vw, 44px)/1.12 var(--serif); margin: 14px 0 12px; letter-spacing: -.01em; }
+  .dek { font-size: 20px; color: var(--ink-2); margin: 0 0 22px; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+  .links a { font: 500 14px/1 var(--sans); color: var(--ink); text-decoration: none; background: var(--chip);
+             padding: 10px 14px; border-radius: 999px; }
+  .links a:hover { background: var(--rule); }
+  h2 { font: 600 24px/1.25 var(--serif); margin: 56px 0 12px; }
+  p { margin: 0 0 16px; }
+  a { color: var(--accent); }
+  figure { margin: 28px 0; }
+  figure img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--rule); background: #fcfcfb; display: block; }
+  figcaption { font: 14px/1.5 var(--sans); color: var(--ink-2); margin-top: 10px; }
+  .pending { font: 14px/1.5 var(--sans); color: var(--ink-2); background: var(--chip); padding: 14px 16px; border-radius: 10px; }
+  ol.contrib { padding-left: 22px; }
+  ol.contrib li { margin-bottom: 12px; }
+  ol.contrib b { font-family: var(--sans); font-size: 15px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 24px 0; }
+  .stat { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; }
+  .stat .n { font: 600 28px/1.1 var(--sans); }
+  .stat .l { font: 13px/1.4 var(--sans); color: var(--ink-2); margin-top: 4px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font: 14px/1.4 var(--sans); }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+  th { color: var(--ink-2); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  code { font: 14px var(--mono); background: var(--chip); padding: 2px 6px; border-radius: 5px; }
+  footer { margin-top: 72px; font: 14px/1.6 var(--sans); color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 20px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker">Open benchmark · preregistered · runs itself</div>
+    <h1>Do language models design and analyse experiments like scientists?</h1>
+    <p class="dek">Axiom-Neuro is a cognitive-neuroscience lab with a hidden, known answer, fitted to real human EEG. No LLM judge: every claim is scored against the truth.</p>
+    <nav class="links">
+      <a href="axiom-neuro.pdf">Paper (PDF)</a>
+      <a href="https://github.com/sumeetmusfirah/axiom-neuro">Code</a>
+      <a href="https://github.com/sumeetmusfirah/axiom-neuro/blob/main/results/RESULTS.md">Live results</a>
+      <a href="https://github.com/sumeetmusfirah/axiom-neuro/blob/main/PREREGISTRATION.md">Preregistration</a>
+    </nav>
+  </header>
+
+  <figure id="hero">
+    <img src="animations/episode.gif" alt="Animated replay of a language model running experiments; bars show what the data support at each step, ticks show the truth.">
+    <figcaption>One episode, replayed. Blue bars: what the data gathered so far actually support. Black ticks: the hidden truth. Orange diamonds at the end: what the model claimed.</figcaption>
+  </figure>
+
+  <div class="stats" id="stats"></div>
+
+  <h2>The lab</h2>
+  <p>Participants do a flanker task under low or high working-memory load, with active or sham transcranial stimulation, optionally with EEG. Six causal edges might be real: load slows people; stimulation helps everywhere, or only under high load; practice speeds people up; load changes frontal theta; load changes blinking. Each task hides one combination.</p>
+  <p>The agent starts with a pilot study, 30 participant-hours of budget, and the tools a human researcher would use: experiment design, regressions with cluster-robust errors, an order-confound check and an artifact check. It must submit a claim and a confidence for every edge.</p>
+
+  <h2>The traps</h2>
+  <p><b>Practice disguised as stimulation.</b> In the pilot, the active-stimulation block always came second, so practice alone makes stimulation look effective. Only a counterbalanced or between-subjects experiment reveals the truth.</p>
+  <p><b>Blinks disguised as brain activity.</b> High load increases blinking, and blinks inflate frontal theta. Only artifact correction or blink-free analysis shows that the "neural" effect isn't there.</p>
+  <p>Each trap has a mirror task with the <em>same</em> pilot data and the <em>opposite</em> truth, so an agent can't score by distrusting every pilot.</p>
+
+  <h2>Grounded in real people</h2>
+  <p>The simulator's response times, accuracy, individual differences, blink rates and EEG noise are fitted to the <a href="https://erpinfo.org/erp-core">ERP CORE</a> flanker dataset (40 participants) and checked against 10 participants it never saw. A second track runs every experiment on real ERP CORE trials with known effects injected on top.</p>
+  <figure data-fig="fig_validation"><img src="figures/fig_validation.png" alt="Simulated vs held-out real participants on five summaries."><figcaption>Simulated participants (histogram) against held-out real ERP CORE participants (points).</figcaption></figure>
+
+  <h2>Results</h2>
+  <p id="status" class="pending">Loading the live results…</p>
+  <figure data-fig="fig_agents"><img src="figures/fig_agents.png" alt="Brier score by agent and track."><figcaption>Primary metric: mean edge Brier score with 95% intervals over tasks. Lower is better.</figcaption></figure>
+  <figure data-fig="fig_decomposition"><img src="figures/fig_decomposition.png" alt="Design versus analysis error per model."><figcaption>Where the errors come from. Blue to orange is analysis error: the same data, read badly. Orange to the line is design error: the wrong experiment.</figcaption></figure>
+  <figure data-fig="fig_traps"><img src="figures/fig_traps.png" alt="Trap rates."><figcaption>How often each agent claimed the planted confounded effect.</figcaption></figure>
+  <figure data-fig="fig_scale"><img src="figures/fig_scale.png" alt="Brier against model size."><figcaption>Does judgement improve with scale?</figcaption></figure>
+  <div class="table-wrap" id="table" hidden></div>
+
+  <h2>Axiom-Bio: the same question on real cells</h2>
+  <p>The second lab uses real single-cell data: 7,466 human T cells from Sachs et al. (2005), with 11 signalling molecules measured by flow cytometry under nine real drug conditions. The agent buys cells from the conditions it chooses and must say which molecules directly regulate which. The candidates are seeded with real-biology traps: reversed arrows, indirect paths and shared upstream regulators. Two pharmacology subtleties are in the data. A MEK inhibitor <em>raises</em> measured Mek while lowering Erk, and two conditions were run without the standard stimulation.</p>
+  <p>Most of the consensus network can't be identified from these interventions alone. That turns the track into a sharp test: the same model with real molecule names versus abstract labels separates <b>recalling textbook biology</b> from <b>reading the data</b>.</p>
+  <figure data-fig="fig_bio"><img src="figures/fig_bio.png" alt="Brier score with real names vs abstract labels."><figcaption>Each model with real molecule names (blue) and with abstract labels (orange). Reference agents use a data-only analyst.</figcaption></figure>
+
+  <h2>Contributions</h2>
+  <ol class="contrib">
+    <li><b>Judge-free evaluation at the human-experiment level.</b> Prior neuroscience discovery benchmarks work with circuits and cells; this one works with noisy human participants, where design and artifact handling decide the answer.</li>
+    <li><b>Planted traps with mirror controls</b>, drawn from mistakes real human-subjects researchers make.</li>
+    <li><b>Real-data grounding twice over:</b> a fitted, validated simulator and a semi-synthetic track on real trials.</li>
+    <li><b>A design-versus-analysis decomposition</b> that says why an AI scientist failed, not just that it did.</li>
+    <li><b>A preregistered study that runs itself for $0:</b> gated, resumable, self-terminating, with a public ledger.</li>
+  </ol>
+
+  <footer>
+    Sumeet Musfirah · Code MIT · Derived ERP CORE data CC BY-SA 4.0 (Kappenman et al., 2021, <i>NeuroImage</i> 225:117465). This page rebuilds itself whenever new results land.
+  </footer>
+</main>
+<script>
+  // Hide any figure whose image has not been generated yet.
+  document.querySelectorAll("figure img").forEach(img => {
+    img.addEventListener("error", () => { img.closest("figure").hidden = true; });
+  });
+  const fmt = (x, d = 3) => (x === null || x === undefined || Number.isNaN(x)) ? "–" : Number(x).toFixed(d);
+  fetch("summary.json").then(r => r.ok ? r.json() : Promise.reject()).then(s => {
+    const cells = Object.values(s.cells || {});
+    const llm = cells.filter(c => !["random", "scripted", "oracle"].includes(c.agent));
+    const stats = [
+      [s.episodes_ok, "episodes scored"],
+      [llm.reduce((a, c) => a + c.n, 0), "language-model episodes"],
+      [s.queued, "queued"],
+      [Object.values(s.gates).filter(g => g.passed).length + "/" + Object.keys(s.gates).length, "gates passed"],
+    ];
+    document.getElementById("stats").innerHTML = stats.map(([n, l]) =>
+      `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
+    const st = document.getElementById("status");
+    st.textContent = llm.length ? `Data as of ${s.generated}. Numbers below are recomputed from the public ledger.`
+                                : `Data as of ${s.generated}. Reference agents first; model results appear here automatically as the engine runs.`;
+    if (cells.length) {
+      const rows = cells.filter(c => c.labels === "named").sort((a, b) => a.brier - b.brier);
+      const t = document.getElementById("table");
+      t.hidden = false;
+      t.innerHTML = `<table><thead><tr><th>Agent</th><th>Track</th><th class="num">n</th><th class="num">Brier ↓</th><th class="num">Exact</th><th class="num">Fell for trap</th></tr></thead><tbody>` +
+        rows.map(c => `<tr><td>${c.agent}</td><td>${c.track}</td><td class="num">${c.n}</td><td class="num">${fmt(c.brier)}</td><td class="num">${fmt(c.exact, 2)}</td><td class="num">${fmt(c.trap_rate, 2)}</td></tr>`).join("") +
+        `</tbody></table>`;
+    }
+  }).catch(() => { document.getElementById("status").textContent = "Results will appear here after the first run."; });
+</script>
+</body>
+</html>

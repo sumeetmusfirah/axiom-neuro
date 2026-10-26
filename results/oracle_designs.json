@@ -1,0 +1,71 @@
+{
+  "budget": 30.0,
+  "sims_per_type": 8,
+  "params_source": "erpcore-ern",
+  "designs": {
+    "pilot: sham vs active, counterbalanced; low load only": {
+      "design": {
+        "factors": [
+          "L",
+          "S"
+        ],
+        "fixed": {},
+        "assignment": "within",
+        "order": "counterbalanced",
+        "n_participants": 32,
+        "trials_per_cell": 40,
+        "eeg": true,
+        "ica": true
+      },
+      "expected_brier": 0.0401,
+      "expected_exact": 0.8125,
+      "task_types": [
+        "load_only",
+        "interaction"
+      ]
+    },
+    "pilot: sham block always first, then active block; high load only": {
+      "design": {
+        "factors": [
+          "L",
+          "S"
+        ],
+        "fixed": {},
+        "assignment": "within",
+        "order": "counterbalanced",
+        "n_participants": 32,
+        "trials_per_cell": 80,
+        "eeg": true,
+        "ica": true
+      },
+      "expected_brier": 0.0361,
+      "expected_exact": 0.9375,
+      "task_types": [
+        "practice_confound",
+        "stim_main"
+      ]
+    },
+    "pilot: low vs high load with EEG, no artifact correction; sham only": {
+      "design": {
+        "factors": [
+          "L"
+        ],
+        "fixed": {
+          "S": 1
+        },
+        "assignment": "within",
+        "order": "counterbalanced",
+        "n_participants": 48,
+        "trials_per_cell": 40,
+        "eeg": true,
+        "ica": true
+      },
+      "expected_brier": 0.0269,
+      "expected_exact": 0.875,
+      "task_types": [
+        "blink_artifact",
+        "neural_theta"
+      ]
+    }
+  }
+}

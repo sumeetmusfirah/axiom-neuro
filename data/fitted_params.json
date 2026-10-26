@@ -1,0 +1,248 @@
+{
+  "source": "erpcore-ern",
+  "dataset": "ERP CORE (Kappenman et al., 2021, NeuroImage 225:117465), ERN flanker task",
+  "doi": "10.18115/D5JW4R",
+  "fit_participants": [
+    "sub-001",
+    "sub-002",
+    "sub-003",
+    "sub-004",
+    "sub-005",
+    "sub-006",
+    "sub-007",
+    "sub-008",
+    "sub-009",
+    "sub-010",
+    "sub-011",
+    "sub-012",
+    "sub-013",
+    "sub-014",
+    "sub-015",
+    "sub-016",
+    "sub-017",
+    "sub-018",
+    "sub-019",
+    "sub-020",
+    "sub-021",
+    "sub-022",
+    "sub-023",
+    "sub-024",
+    "sub-025",
+    "sub-026",
+    "sub-027",
+    "sub-028",
+    "sub-029",
+    "sub-030",
+    "sub-031",
+    "sub-032",
+    "sub-033",
+    "sub-034",
+    "sub-035",
+    "sub-036",
+    "sub-037",
+    "sub-038",
+    "sub-039",
+    "sub-040"
+  ],
+  "heldout_participants": [
+    "sub-001",
+    "sub-002",
+    "sub-003",
+    "sub-004",
+    "sub-005",
+    "sub-006",
+    "sub-007",
+    "sub-008",
+    "sub-009",
+    "sub-010",
+    "sub-011",
+    "sub-012",
+    "sub-013",
+    "sub-014",
+    "sub-015",
+    "sub-016",
+    "sub-017",
+    "sub-018",
+    "sub-019",
+    "sub-020",
+    "sub-021",
+    "sub-022",
+    "sub-023",
+    "sub-024",
+    "sub-025",
+    "sub-026",
+    "sub-027",
+    "sub-028",
+    "sub-029",
+    "sub-030",
+    "sub-031",
+    "sub-032",
+    "sub-033",
+    "sub-034",
+    "sub-035",
+    "sub-036",
+    "sub-037",
+    "sub-038",
+    "sub-039",
+    "sub-040"
+  ],
+  "params": {
+    "rt_mu": 320.11994990332727,
+    "rt_mu_sd": 51.55432927918788,
+    "rt_sigma": 29.843004721774406,
+    "rt_tau": 39.37143245253915,
+    "cong_rt": 61.00146209055123,
+    "cong_rt_sd": 18.64125463642887,
+    "acc_logit": 4.219520281928716,
+    "acc_logit_sd": 1.2365789427370688,
+    "cong_acc_logit": -2.5806755430450563,
+    "slope_sd_frac": 0.3,
+    "theta_sd_between": 0.44377510603504927,
+    "theta_sd_within": 0.6141156942026127,
+    "theta_sd_within_sd": 0.07285693560841754,
+    "blink_rate": 0.48126650216696537,
+    "blink_logit_sd": 1.7367947093850202,
+    "blink_theta_gain": 0.2864345563710809,
+    "ica_removal": 0.9,
+    "missing_rate": 0.001380681818181818,
+    "source": "erpcore-ern",
+    "validation_passed": true
+  },
+  "validation": {
+    "passed": true,
+    "checks": {
+      "mean_rt": {
+        "real_mean": 398.26121113366514,
+        "sim_mean": 384.68893849999137,
+        "d": -0.281,
+        "ks_p": 0.1185,
+        "passed": true
+      },
+      "cong_effect": {
+        "real_mean": 61.001462090551215,
+        "sim_mean": 60.30921720247957,
+        "d": -0.037,
+        "ks_p": 0.5338,
+        "passed": true
+      },
+      "accuracy": {
+        "real_mean": 0.8876724900946776,
+        "sim_mean": 0.8805242689190043,
+        "d": -0.079,
+        "ks_p": 0.3165,
+        "passed": true
+      },
+      "blink_rate": {
+        "real_mean": 0.4719140512265512,
+        "sim_mean": 0.4731875,
+        "d": 0.004,
+        "ks_p": 0.983,
+        "passed": true
+      },
+      "theta_sd_within": {
+        "real_mean": 0.6141156942026127,
+        "sim_mean": 0.6091537485469792,
+        "d": -0.062,
+        "ks_p": 0.1185,
+        "passed": true
+      }
+    },
+    "method": "5-fold cross-validation over participants",
+    "folds": [
+      [
+        "sub-002",
+        "sub-003",
+        "sub-005",
+        "sub-008",
+        "sub-010",
+        "sub-022",
+        "sub-034",
+        "sub-037"
+      ],
+      [
+        "sub-001",
+        "sub-013",
+        "sub-014",
+        "sub-019",
+        "sub-021",
+        "sub-025",
+        "sub-031",
+        "sub-036"
+      ],
+      [
+        "sub-009",
+        "sub-011",
+        "sub-012",
+        "sub-018",
+        "sub-020",
+        "sub-028",
+        "sub-030",
+        "sub-039"
+      ],
+      [
+        "sub-007",
+        "sub-016",
+        "sub-017",
+        "sub-027",
+        "sub-029",
+        "sub-033",
+        "sub-035",
+        "sub-040"
+      ],
+      [
+        "sub-004",
+        "sub-006",
+        "sub-015",
+        "sub-023",
+        "sub-024",
+        "sub-026",
+        "sub-032",
+        "sub-038"
+      ]
+    ],
+    "n_heldout": 40,
+    "n_sim_participants": 480,
+    "criteria": "|d| < 0.5 and KS p > 0.01 for every summary"
+  },
+  "superseded_contiguous_split_validation": {
+    "split": "fit 1-30, held-out 31-40",
+    "passed": false,
+    "checks": {
+      "mean_rt": {
+        "real_mean": 404.33786581429274,
+        "sim_mean": 389.8423816019133,
+        "d": -0.317,
+        "ks_p": 0.3534,
+        "passed": true
+      },
+      "cong_effect": {
+        "real_mean": 73.00866603243436,
+        "sim_mean": 55.86000455263335,
+        "d": -0.904,
+        "ks_p": 0.0007,
+        "passed": false
+      },
+      "accuracy": {
+        "real_mean": 0.8855942697653223,
+        "sim_mean": 0.8735553599837124,
+        "d": -0.145,
+        "ks_p": 0.4515,
+        "passed": true
+      },
+      "blink_rate": {
+        "real_mean": 0.4422499999999999,
+        "sim_mean": 0.47960937499999995,
+        "d": 0.124,
+        "ks_p": 0.9004,
+        "passed": true
+      },
+      "theta_sd_within": {
+        "real_mean": 0.6245094417376398,
+        "sim_mean": 0.613223439804374,
+        "d": -0.149,
+        "ks_p": 0.2979,
+        "passed": true
+      }
+    }
+  }
+}

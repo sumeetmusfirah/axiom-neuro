@@ -1,0 +1,156 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{authblk}
+\usepackage{enumitem}
+\definecolor{linkblue}{HTML}{2A78D6}
+\usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
+\setlist{itemsep=2pt,topsep=4pt}
+
+\input{generated/macros.tex}
+\newcommand{\fig}[3]{%
+  \IfFileExists{figures/#1.pdf}{%
+    \begin{figure}[t]\centering\includegraphics[width=#2\linewidth]{figures/#1.pdf}\caption{#3}\label{fig:#1}\end{figure}}{}}
+
+\title{\textbf{Axiom: Do Language Models Design and Analyse\\Experiments Like Scientists?}\\[4pt]
+\large A cognitive-control lab fitted to real human EEG, and a signalling lab on real single cells}
+\author[1]{Sumeet Musfirah}
+\affil[1]{Independent Researcher}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Evaluations of AI scientists usually grade prose, often with another language model as the judge, and those judges can disagree at chance on the same outputs.
+We instead build a laboratory whose answers are known.
+Axiom-Neuro simulates a human cognitive-control study (a flanker task with working-memory load, transcranial stimulation, and EEG).
+Each task hides a causal mechanism among six candidate edges, and an agent must find it by designing experiments under a fixed participant-hour budget, analysing the data with standard tools, and submitting calibrated claims.
+Several tasks open with pilot data containing a planted confound that real human-subjects researchers fall for: a stimulation effect that is really practice, and a theta effect that is really blinks.
+The simulator's noise, heterogeneity and artifacts are fitted to the ERP CORE flanker dataset (40 participants) and validated on held-out participants.
+A second, semi-synthetic track uses real ERP CORE trials as the substrate and injects known effects on top.
+Scoring needs no judge: claims are compared with the hidden mechanism using a proper scoring rule.
+Because the same ideal analyst can be applied to any agent's data, each agent's error splits cleanly into an experiment-design part and an analysis part.
+A second lab, Axiom-Bio, asks the same question on 7{,}466 real T cells \citep{sachs2005causal}: which signalling molecules directly regulate which, given real drug interventions; comparing real molecule names with abstract labels separates recalling textbook biology from inferring it from data.
+Hypotheses, the stopping rule and all analyses were preregistered before any language-model episode ran, and the whole study runs unattended on free infrastructure with a public results ledger.
+\resultsStatus
+\end{abstract}
+
+\section{Introduction}
+Language models are increasingly asked to act as scientists: to propose experiments, run analyses and report conclusions \citep{jansen2024discoveryworld,gandhi2025boxinggym,chen2025scienceagentbench}.
+The hard part of science is rarely the arithmetic.
+It is judgement: choosing an experiment that can tell hypotheses apart, noticing that a factor is tied to session order, checking whether an EEG effect survives artifact removal, and stating conclusions with the confidence the data warrant.
+
+These are exactly the skills that are hardest to grade.
+A model's report can sound right and be wrong, and when another model is the grader, the grade inherits that model's blind spots.
+We take the opposite approach: build a world where the truth is known, so that scoring is arithmetic.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item \textbf{A judge-free scientific-reasoning environment at the human-experiment level.}
+  Prior neuroscience discovery benchmarks work at the circuit or cell level \citep{sinha2026digitalfly,lueckmann2026zebrafish,murphy2026mda}.
+  Axiom-Neuro targets population-level causal claims from noisy human participants, where factorial design, counterbalancing and artifact handling decide the answer.
+  \item \textbf{Planted, ecologically real traps with mirror controls.}
+  Each confound task (practice disguised as stimulation; blinks disguised as theta) has a held-out mirror task with the same pilot data and the opposite truth, so an agent cannot score by always distrusting the pilot.
+  \item \textbf{Grounding in real data, two ways.}
+  Nuisance parameters are fitted to ERP CORE \citep{kappenman2021erpcore} and validated on held-out participants; a semi-synthetic track replaces the parametric noise with real trials. Agreement between tracks is itself a preregistered test (H5).
+  \item \textbf{A design-versus-analysis decomposition.}
+  Re-analysing each agent's own data with an ideal analyst separates ``ran the wrong experiment'' from ``drew the wrong conclusion from the right one''.
+  \item \textbf{A preregistered, self-running study.}
+  Gates in code block language-model runs until the fit validates, the reference agents order correctly and the task set is frozen; an adaptive stopping rule decides how many replications each cell needs. Everything runs on free GitHub-hosted runners with local open-weight models.
+\end{enumerate}
+
+\section{Related work}
+Simulated discovery with hidden ground truth is an active area.
+BoxingGym \citep{gandhi2025boxinggym} offers ten generic environments scored by expected information gain and is the closest framework to ours.
+DiscoveryWorld \citep{jansen2024discoveryworld} covers 120 text-world discovery tasks across eight topics.
+ScienceAgentBench \citep{chen2025scienceagentbench} evaluates data-analysis code from 44 papers but not experiment design.
+In neuroscience, recent work evaluates agents on a whole-brain \emph{Drosophila} model \citep{sinha2026digitalfly}, identifies mechanistic models in a simulated zebrafish \citep{lueckmann2026zebrafish}, couples language models with Bayesian experiment design \citep{murphy2026mda}, and stress-tests coding agents on a real optogenetics pipeline, finding that stage-level successes do not compose into end-to-end discovery \citep{horstmann2026casestudy}.
+CheeseBench \citep{bugaud2026cheesebench} places the model in the role of the experimental animal; we place it in the role of the experimenter.
+Our niche is the human cognitive-experiment level, with its characteristic confounds.
+
+\section{Environment}
+\paragraph{Hypothesis family.}
+Six candidate causal edges among load $L$, stimulation $S$, practice $P$, performance $Y$, frontal theta $T$ and blinks $B$:
+$L\!\to\!Y$, $S\!\to\!Y$ (a main effect), $S{\times}L\!\to\!Y$ (an interaction), $P\!\to\!Y$, $L\!\to\!T$ (a genuine neural effect) and $L\!\to\!B$.
+Six task types (four training, two held out) fix which edges exist; effect magnitudes are sampled per instance, and practice is present at random except where a trap requires it.
+Practice follows a saturating learning curve, so a linear time covariate cannot remove an order confound; only counterbalancing or a between-subjects design can.
+
+\paragraph{Actions and budget.}
+An agent may design an experiment (factors, fixed levels, within or between subjects, fixed or counterbalanced order, sample size, trials per cell, EEG and ICA), describe data, fit cluster-robust regressions, check order confounds, check artifacts, and submit a claim and confidence for every edge.
+Experiments cost participant-hours (session length times participants, more with EEG); analysis is free.
+The budget (30 participant-hours) affords a well-chosen factorial study but not brute force.
+
+\paragraph{Simulator and real-data grounding.}
+\fitStatus\ Validation uses 5-fold cross-validation over participants; a first, contiguous split (participants 1--30 versus 31--40) failed on the congruency effect because the two ID ranges differ, and this change is recorded in the preregistration's deviations log.
+Response times follow an ex-Gaussian with participant-level variation; accuracy is logistic; injected effects vary across participants; blinks contaminate frontal theta unless ICA is applied.
+In the semi-synthetic track each simulated participant is a real ERP CORE participant, with known effects injected on top of their real responses, theta and blinks.
+
+\fig{fig_validation}{1.0}{Posterior-predictive check: summaries of held-out real ERP CORE participants (points) against simulated participants (histogram). $d$ is the standardised difference.}
+
+\section{Agents, analyst and scoring}
+\paragraph{Reference agents.}
+All three use the same ideal analyst, so they differ only in experiment choice: \emph{random} (random affordable designs), \emph{scripted} (a textbook counterbalanced $2{\times}2$ with EEG and ICA) and \emph{oracle} (the single design that maximises the ideal analyst's expected accuracy over the hypothesis family, found by simulation).
+
+\paragraph{Ideal analyst.}
+A cluster-robust regression per edge, trusting performance effects only from designs not tied to session order and theta effects only from blink-free trials.
+Posterior probabilities use the BIC approximation to the Bayes factor, $\log \mathrm{BF}_{10} \approx (z^2 - \ln n)/2$, with $z$ adjusted for the number of participants.
+
+\paragraph{Language-model agents.}
+\nModels{} open-weight models (3B to 15B parameters) run locally with schema-constrained JSON actions, a 12-turn limit and fixed sampling temperature, each with variable names shown either as named (``load'', ``tES'') or abstract (``Factor A''), to test reliance on textbook priors.
+
+\paragraph{Metrics.}
+The primary metric is the mean edge Brier score, a proper scoring rule that rewards calibrated confidence.
+Secondary metrics are exact mechanism recovery, falling for the planted trap, confident errors and whether the agent took the confound-revealing action.
+The \emph{ideal-on-own-data} score re-analyses an agent's own datasets with the ideal analyst: the gap from the agent's claims is analysis error, and the gap from the oracle is design error.
+
+\section{Axiom-Bio: real single cells}
+\paragraph{Data.} Eleven phosphoproteins and phospholipids measured by flow cytometry in 7{,}466 human CD4$^+$ T cells under nine conditions \citep{sachs2005causal}: CD3/CD28 stimulation, with ICAM-2 co-stimulation, and with five inhibitors (of Akt, PKC, PIP2, MEK and PI3K), plus PKC activation by PMA and PKA activation by $\beta_2$cAMP, both without CD3/CD28. Ground truth is the 20-edge consensus graph distributed with the data (Zenodo record 7681811).
+\paragraph{Tasks.} Forty tasks, each with six candidate directed edges: two or three true edges plus reversed, indirect (a path through another molecule) and confounded (a shared regulator, no path) edges. Agents buy real cells (2{,}400 per task, with a per-condition overhead), compare conditions and compute partial correlations.
+\paragraph{What it can and cannot measure.} Two real pharmacological subtleties are in the data: U0126, a MEK inhibitor, \emph{raises} measured phospho-Mek while lowering Erk, and the PMA and $\beta_2$cAMP conditions lack the CD3/CD28 context of the baseline. Most consensus edges cannot be identified from the available interventions alone: a data-only reference analyst recovers 22\% of true edges. The track therefore isolates a different question. With real names a model can recall the textbook pathway; with abstract labels it can only read the data. The named-minus-abstract gap (B1) measures recall, and the abstract-label comparison with the data-only analyst (B2) measures inference.
+
+\fig{fig_bio}{0.85}{Axiom-Bio: each model with real molecule names and with abstract labels.}
+
+\section{Preregistered hypotheses}
+H1: models score below the scripted baseline.
+H2: models fall for planted traps more often than they make the matched error on mirror tasks.
+H3: both design and analysis error are non-zero, quantified by the decomposition.
+H4: performance improves with parameter count (descriptive, five models).
+H5: agents rank the same on synthetic and semi-synthetic tracks (Kendall $\tau \ge 0.6$).
+H6: named variables help compared with abstract labels.
+Axiom-Bio adds B1 (names help, i.e.\ recall), B2 (abstract-label models versus the data-only analyst) and B3 (claim rates for true, reversed, indirect and confounded edges).
+Full text, analysis plan, the stopping rule and a dated deviations log are in \texttt{PREREGISTRATION.md}.
+
+\section{Results}
+\resultsStatus
+
+\begin{table}[h]\centering\small
+\input{generated/results_table.tex}
+\caption{Named-label results. Brier: mean edge Brier score (lower is better). Exact: fraction of episodes recovering the whole mechanism. Trap: fraction of confound-task episodes claiming the confounded edge. Ideal-on-own: exact recovery when the ideal analyst re-analyses the agent's own data.}
+\end{table}
+
+\fig{fig_agents}{0.85}{Primary metric by agent and track, with 95\% bootstrap intervals over tasks.}
+\fig{fig_decomposition}{0.85}{Design versus analysis error for each model.}
+\fig{fig_traps}{0.85}{How often each agent claimed the planted confounded effect.}
+\fig{fig_scale}{0.75}{Scientific judgement against model size.}
+
+\section{Limitations}
+The hypothesis family is small and hand-designed; a model could in principle learn its menu, which is why two task types are held out and an abstract-label condition is run.
+Effects of load and stimulation are not in ERP CORE; their sizes come from deliberately small priors and are varied rather than fitted.
+The ideal analyst knows the practice-curve shape, so the oracle line is an upper reference, not a bound on any possible analyst.
+Only local open-weight models up to 15B parameters are evaluated, because the study is run at zero cost.
+
+\section{Reproducibility}
+Code, the frozen task manifest and its hash, the fitted parameters, every episode transcript and the results ledger are public.
+The figures, this paper's numbers and the project page are regenerated from the ledger on every run.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\end{document}

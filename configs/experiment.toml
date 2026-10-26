@@ -1,0 +1,60 @@
+# Single source of truth for what the automation runs.
+# Adding a model here is all it takes: the next scheduled run queues it automatically.
+
+[tasks]
+seed = 20261025
+instances_per_type = 10          # per task type; 4 train + 2 held-out types -> 60 tasks
+budget_participant_hours = 30.0
+
+[tracks]
+# synthetic      = parametric simulator fitted to ERP CORE
+# semisynthetic  = real ERP CORE trials as the noise substrate + injected known effects
+enabled = ["synthetic", "semisynthetic"]
+
+[labels]
+# named = real variable names (load, tES, theta); abstract = "Factor A", "Measure 2"
+enabled = ["named", "abstract"]
+
+[bio]
+# Axiom-Bio: real single cells (Sachs et al. 2005). Same agents, same engine, same ledger.
+enabled = true
+seed = 20261025
+n_tasks = 40
+
+[baselines]
+agents = ["random", "scripted", "oracle"]
+seeds = 3
+
+[llm]
+# All local, $0. minutes_per_episode is the CPU estimate used to size shards.
+models = [
+  { name = "llama3.2:3b", params_b = 3.2, minutes_per_episode = 5 },
+  { name = "qwen3:4b",    params_b = 4.0, minutes_per_episode = 7 },
+  { name = "gemma3:4b",   params_b = 4.3, minutes_per_episode = 7 },
+  { name = "mistral:7b",  params_b = 7.2, minutes_per_episode = 10 },
+  { name = "qwen3:14b",   params_b = 14.8, minutes_per_episode = 22 },
+]
+max_turns = 12
+temperature = 0.7
+num_predict = 400
+request_timeout_s = 600
+
+[seeds]
+# Adaptive replication: keep adding seeds to a cell until the 95% CI half-width
+# on the primary metric (mean edge Brier score) is below target, or max_seeds is reached.
+# This is the preregistered stopping rule.
+min_seeds = 3
+max_seeds = 10
+ci_halfwidth_target = 0.01
+
+[automation]
+max_shards_per_run = 8
+max_parallel = 4                 # deliberately modest; see docs/ARCHITECTURE.md (Actions terms)
+shard_hours = 5.3                # GitHub job limit is 6h; leave margin for setup + upload
+max_error_retries = 3
+
+[gates]
+# Hard stops, enforced in code by `axiom plan`:
+require_fit_validated = true     # ERP CORE held-out check must pass before anything runs
+require_baseline_order = true    # random < scripted < oracle before any LLM episode
+require_frozen_tasks = true      # manifest hash must match tasks/MANIFEST.sha256

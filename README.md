@@ -46,9 +46,15 @@ My [previous study](https://github.com/Project-Aletheia-org/aletheia-pressure-ev
 
 ## What an episode looks like
 
-![episode](https://sumeetmusfirah.github.io/axiom-neuro/animations/episode.gif)
+![episode](https://sumeetmusfirah.github.io/axiom-neuro/animations/demo_reference.gif)
 
-*Blue bars: what the data collected so far actually support, according to the ideal analyst. Black ticks: the truth. Orange diamonds, at the end: what the model claimed.*
+*The scripted reference agent on the practice trap. Blue bars: what the data collected so far actually support, according to the ideal analyst. Black ticks: the truth. Orange diamonds, at the end: what the agent claimed. Language-model replays are on the [project page](https://sumeetmusfirah.github.io/axiom-neuro/) once results land.*
+
+## How the traps work
+
+![traps](https://sumeetmusfirah.github.io/axiom-neuro/figures/fig_trap_mechanics.png)
+
+*Computed from the simulator. Grey: the effect the pilot suggests. Blue: what a careful experiment recovers. The effect vanishes on each trap task and survives on its held-out mirror.*
 
 ## The paper
 

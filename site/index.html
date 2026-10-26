@@ -52,6 +52,12 @@
   th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
   th { color: var(--ink-2); font-weight: 600; }
   tr:last-child td { border-bottom: 0; }
+  .engine { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 20px 0 8px; }
+  .loop { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; font: 14px/1.5 var(--sans); }
+  .loop h3 { font: 600 15px/1.3 var(--sans); margin: 0 0 6px; }
+  .loop p { margin: 0; color: var(--ink-2); }
+  .loop .state { display: inline-block; margin-top: 10px; font: 600 12px/1 var(--sans); padding: 6px 9px; border-radius: 999px; background: var(--chip); color: var(--ink); }
+  .dag { font-size: 12px; color: var(--ink-2); }
   .num { text-align: right; font-variant-numeric: tabular-nums; }
   code { font: 14px var(--mono); background: var(--chip); padding: 2px 6px; border-radius: 5px; }
   footer { margin-top: 72px; font: 14px/1.6 var(--sans); color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 20px; }
@@ -88,8 +94,8 @@
   <p>Each trap has a mirror task with the <em>same</em> pilot data and the <em>opposite</em> truth, so an agent can't score by distrusting every pilot.</p>
 
   <h2>Grounded in real people</h2>
-  <p>The simulator's response times, accuracy, individual differences, blink rates and EEG noise are fitted to the <a href="https://erpinfo.org/erp-core">ERP CORE</a> flanker dataset (40 participants) and checked against 10 participants it never saw. A second track runs every experiment on real ERP CORE trials with known effects injected on top.</p>
-  <figure data-fig="fig_validation"><img src="figures/fig_validation.png" alt="Simulated vs held-out real participants on five summaries."><figcaption>Simulated participants (histogram) against held-out real ERP CORE participants (points).</figcaption></figure>
+  <p>The simulator's response times, accuracy, individual differences, blink rates and EEG noise are fitted to the <a href="https://erpinfo.org/erp-core">ERP CORE</a> flanker dataset (40 participants) and checked by 5-fold cross-validation: each of the 40 participants is predicted by a simulator that never saw them. A second track runs every experiment on real ERP CORE trials with known effects injected on top.</p>
+  <figure data-fig="fig_validation"><img src="figures/fig_validation.png" alt="Simulated vs held-out real participants on five summaries."><figcaption>Simulated participants (histogram) against held-out real ERP CORE participants (points), across all five folds.</figcaption></figure>
 
   <h2>Results</h2>
   <p id="status" class="pending">Loading the live results…</p>
@@ -99,10 +105,24 @@
   <figure data-fig="fig_scale"><img src="figures/fig_scale.png" alt="Brier against model size."><figcaption>Does judgement improve with scale?</figcaption></figure>
   <div class="table-wrap" id="table" hidden></div>
 
+  <h2>Replication on fresh tasks</h2>
+  <p>A frozen task set can leak. Once it is published, later models may have seen it. So when the preregistered queue empties, the engine freezes a new wave of never-seen task instances every four weeks. Their seeds were fixed in advance. Every agent runs each wave once. If the rankings hold on fresh tasks, the benchmark measures judgement, not memory.</p>
+  <p id="waves" class="pending">No wave has run yet. The first one is frozen once the preregistered queue is empty.</p>
+  <div class="table-wrap" id="wavetable" hidden></div>
+
   <h2>Axiom-Bio: the same question on real cells</h2>
   <p>The second lab uses real single-cell data: 7,466 human T cells from Sachs et al. (2005), with 11 signalling molecules measured by flow cytometry under nine real drug conditions. The agent buys cells from the conditions it chooses and must say which molecules directly regulate which. The candidates are seeded with real-biology traps: reversed arrows, indirect paths and shared upstream regulators. Two pharmacology subtleties are in the data. A MEK inhibitor <em>raises</em> measured Mek while lowering Erk, and two conditions were run without the standard stimulation.</p>
   <p>Most of the consensus network can't be identified from these interventions alone. That turns the track into a sharp test: the same model with real molecule names versus abstract labels separates <b>recalling textbook biology</b> from <b>reading the data</b>.</p>
   <figure data-fig="fig_bio"><img src="figures/fig_bio.png" alt="Brier score with real names vs abstract labels."><figcaption>Each model with real molecule names (blue) and with abstract labels (orange). Reference agents use a data-only analyst.</figcaption></figure>
+
+  <h2>How it keeps going</h2>
+  <p>The preregistered study is finite: its stopping rule closes every cell. Three loops then add real work on their own, and none of them touches the preregistered results.</p>
+  <div class="engine" id="engine">
+    <div class="loop"><h3>Engine · every 6 hours</h3><p>Plan what's left, run it in parallel on free runners with local open-weight models, merge, report, commit only new results.</p><span class="state" id="st-engine">–</span></div>
+    <div class="loop"><h3>Replication waves · every 4 weeks</h3><p>Once the queue is empty, freeze 30 fresh tasks (seeds fixed in advance) and run every agent on them.</p><span class="state" id="st-waves">–</span></div>
+    <div class="loop"><h3>Model intake · weekly</h3><p>When the queue runs short, add the next open model from the candidate list, pinned to the exact build of its weights.</p><span class="state" id="st-models">–</span></div>
+    <div class="loop"><h3>Data releases · on each drained queue</h3><p>Publish a versioned release with the full ledger, so every number here can be cited and re-derived.</p><span class="state" id="st-release">–</span></div>
+  </div>
 
   <h2>Contributions</h2>
   <ol class="contrib">
@@ -111,6 +131,7 @@
     <li><b>Real-data grounding twice over:</b> a fitted, validated simulator and a semi-synthetic track on real trials.</li>
     <li><b>A design-versus-analysis decomposition</b> that says why an AI scientist failed, not just that it did.</li>
     <li><b>A preregistered study that runs itself for $0:</b> gated, resumable, self-terminating, with a public ledger.</li>
+    <li><b>It doesn't stop at the frozen set:</b> scheduled replication waves on unseen tasks, digest-pinned model intake and versioned data releases.</li>
   </ol>
 
   <footer>
@@ -137,12 +158,31 @@
     const st = document.getElementById("status");
     st.textContent = llm.length ? `Data as of ${s.generated}. Numbers below are recomputed from the public ledger.`
                                 : `Data as of ${s.generated}. Reference agents first; model results appear here automatically as the engine runs.`;
+    const models = s.models || [];
+    const added = new Set(models.filter(m => m.added).map(m => m.name));
+    const name = a => added.has(a) ? `${a} <span class="dag">†</span>` : a;
+    const rep = s.replication || {};
+    const nWaves = (s.waves || []).length;
+    document.getElementById("st-engine").textContent = s.queued ? `${s.queued} episodes queued` : "queue empty";
+    document.getElementById("st-waves").textContent = nWaves ? `${nWaves} wave${nWaves > 1 ? "s" : ""} frozen` : "starts when the queue empties";
+    document.getElementById("st-models").textContent = models.length ? `${models.length} models · ${added.size} added since registration` : "–";
+    document.getElementById("st-release").textContent = s.release_tag ? `due: ${s.release_tag}` : "next one when the queue drains";
+    if ((rep.table || []).length) {
+      const ws = rep.waves;
+      document.getElementById("waves").textContent = rep.kendall_tau === null ? `${ws.length} wave(s) scored so far. Synthetic track, named labels, edge Brier.`
+        : `Ranking agreement between the preregistered set and the fresh waves: Kendall τ = ${fmt(rep.kendall_tau, 2)} (n = ${rep.n_agents} agents).`;
+      const wt = document.getElementById("wavetable");
+      wt.hidden = false;
+      wt.innerHTML = `<table><thead><tr><th>Agent</th><th class="num">Preregistered set</th>${ws.map(w => `<th class="num">Wave ${w}</th>`).join("")}<th class="num">All waves</th></tr></thead><tbody>` +
+        rep.table.slice().sort((a, b) => a.pooled - b.pooled).map(t => `<tr><td>${name(t.agent)}</td><td class="num">${fmt(t.primary)}</td>${ws.map(w => `<td class="num">${fmt(t.waves[w])}</td>`).join("")}<td class="num">${fmt(t.pooled)}</td></tr>`).join("") +
+        `</tbody></table>`;
+    }
     if (cells.length) {
       const rows = cells.filter(c => c.labels === "named").sort((a, b) => a.brier - b.brier);
       const t = document.getElementById("table");
       t.hidden = false;
       t.innerHTML = `<table><thead><tr><th>Agent</th><th>Track</th><th class="num">n</th><th class="num">Brier ↓</th><th class="num">Exact</th><th class="num">Fell for trap</th></tr></thead><tbody>` +
-        rows.map(c => `<tr><td>${c.agent}</td><td>${c.track}</td><td class="num">${c.n}</td><td class="num">${fmt(c.brier)}</td><td class="num">${fmt(c.exact, 2)}</td><td class="num">${fmt(c.trap_rate, 2)}</td></tr>`).join("") +
+        rows.map(c => `<tr><td>${name(c.agent)}</td><td>${c.track}</td><td class="num">${c.n}</td><td class="num">${fmt(c.brier)}</td><td class="num">${fmt(c.exact, 2)}</td><td class="num">${fmt(c.trap_rate, 2)}</td></tr>`).join("") +
         `</tbody></table>`;
     }
   }).catch(() => { document.getElementById("status").textContent = "Results will appear here after the first run."; });

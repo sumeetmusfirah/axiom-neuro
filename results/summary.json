@@ -239,5 +239,38 @@
     "kendall_tau": null,
     "n_agents": 0
   },
-  "release_tag": null
+  "release_tag": null,
+  "models": [
+    {
+      "name": "llama3.2:3b",
+      "params_b": 3.2,
+      "added": null,
+      "digest": null
+    },
+    {
+      "name": "qwen3:4b",
+      "params_b": 4.0,
+      "added": null,
+      "digest": null
+    },
+    {
+      "name": "gemma3:4b",
+      "params_b": 4.3,
+      "added": null,
+      "digest": null
+    },
+    {
+      "name": "mistral:7b",
+      "params_b": 7.2,
+      "added": null,
+      "digest": null
+    },
+    {
+      "name": "qwen3:14b",
+      "params_b": 14.8,
+      "added": null,
+      "digest": null
+    }
+  ],
+  "waves": []
 }

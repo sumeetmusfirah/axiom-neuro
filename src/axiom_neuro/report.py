@@ -14,6 +14,7 @@ import numpy as np
 from scipy import stats
 
 from . import ledger as L
+from . import waves as W
 from .config import load_config
 from .params import REPO
 from .planner import make_plan
@@ -324,6 +325,8 @@ def build(rows: list[dict] | None = None) -> dict:
     release = f"results-{now[:10]}" if n_ok and not plan["n_pending_total"] and not plan["setup"] else None
     payload = {"generated": now, "episodes_ok": n_ok, "failed_attempts": n_err,
                "queued": plan["n_pending_total"], "gates": plan["gates"], "cells": summ, "hypotheses": hyp,
-               "replication": rep, "release_tag": release}
+               "replication": rep, "release_tag": release,
+               "models": [{k: m.get(k) for k in ("name", "params_b", "added", "digest")} for m in cfg["llm"]["models"]],
+               "waves": W.index()}
     SUMMARY.write_text(json.dumps(payload, indent=2, default=str))
     return payload

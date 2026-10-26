@@ -24,12 +24,19 @@ jobs:
       matrix: ${{ steps.plan.outputs.matrix }}
       has_work: ${{ steps.plan.outputs.has_work }}
       setup: ${{ steps.plan.outputs.setup }}
+      sha: ${{ steps.plan.outputs.sha }}
     steps:
+      # A scheduled run that waited in the queue must plan against the ledger as it is now,
+      # not as it was when the run was triggered, or it repeats work the previous run did.
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: astral-sh/setup-uv@v6
       - run: uv venv --python 3.11 && uv pip install -e .
       - id: plan
-        run: .venv/bin/axiom plan --out plan.json
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          .venv/bin/axiom plan --out plan.json
       - uses: actions/upload-artifact@v4
         with:
           name: plan
@@ -43,6 +50,8 @@ jobs:
     timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: astral-sh/setup-uv@v6
       - run: uv venv --python 3.11 && uv pip install -e ".[fit]"
       - name: Fit simulator to ERP CORE (validation result is committed either way)
@@ -83,6 +92,8 @@ jobs:
     timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.plan.outputs.sha }}
       - uses: astral-sh/setup-uv@v6
       - run: uv venv --python 3.11 && uv pip install -e .
       - uses: actions/download-artifact@v4
@@ -122,14 +133,20 @@ jobs:
           pattern: shard-*
           path: results/
           merge-multiple: true
-      - run: .venv/bin/axiom collect && .venv/bin/axiom report && .venv/bin/axiom study-report
-      - name: Commit results (only when there is new data)
+      - name: Merge into the latest ledger and commit (only when there is new data)
+        # Rebuild on top of whatever main is now instead of rebasing generated files, which conflict.
+        # collect is idempotent (by attempt id), so retrying after a race is safe.
         run: |
           git config user.name "axiom-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          rm -rf results/incoming
-          git add results/ README.md
-          git diff --cached --quiet && { echo "no new results"; exit 0; }
-          n=$(git diff --cached --numstat results/ledger.jsonl | awk '{print $1}')
-          git commit -m "results: +${n:-0} ledger rows (run ${{ github.run_id }})"
-          for i in 1 2 3 4 5; do git pull --rebase && git push && exit 0; sleep $((i * 10)); done; exit 1
+          for i in 1 2 3 4 5; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            .venv/bin/axiom collect && .venv/bin/axiom report && .venv/bin/axiom study-report
+            git add results/ README.md ':!results/incoming'
+            git diff --cached --quiet && { echo "no new results"; exit 0; }
+            n=$(git diff --cached --numstat results/ledger.jsonl | awk '{print $1}')
+            git commit -q -m "results: +${n:-0} ledger rows (run ${{ github.run_id }})"
+            git push origin HEAD:main && exit 0
+            sleep $((i * 15))
+          done
+          exit 1

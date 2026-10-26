@@ -95,7 +95,7 @@ We take the opposite approach: build a world where the truth is known, so that s
   \draw[arr] (pilot) -- (design);
   \draw[arr] (design) -- (run);
   \draw[arr] (run) -- (analyse);
-  \draw[arr] (analyse.north west) to[bend left=18] node[font=\scriptsize,fill=white,inner sep=1pt]{repeat while budget lasts} (design.south east);
+  \draw[arr] (analyse.north west) to[bend left=22] node[font=\scriptsize,below left=-1pt,align=right]{repeat while\\budget lasts} (design.south east);
   \draw[arr] (analyse) -- (claim);
   \draw[arr] (claim) -- (score);
   \draw[arr,draw=axclay,dashed] (truth) -- (score);
@@ -103,8 +103,8 @@ We take the opposite approach: build a world where the truth is known, so that s
     \node[draw=axolive,dashed,rounded corners=4pt,fit=(design)(run)(analyse),inner sep=4pt,
       label={[font=\scriptsize\color{axolive}]above:agent, 30 participant-hours}] {};
   \end{scope}
-  \node[ax,below=8mm of claim,font=\scriptsize,minimum height=7mm] (ideal) {\textbf{Ideal analyst} re-analyses the agent's own data:\ \ claims $-$ ideal $=$ \emph{analysis error};\ \ ideal $-$ oracle $=$ \emph{design error}};
-  \draw[arr,draw=axolive] (analyse.south) |- (ideal.east);
+  \node[ax,below=9mm of $(claim)!0.5!(analyse)$,font=\scriptsize,minimum height=7mm] (ideal) {\textbf{Ideal analyst} re-analyses the agent's own data:\ \ claims $-$ ideal $=$ \emph{analysis error};\ \ ideal $-$ oracle $=$ \emph{design error}};
+  \draw[arr,draw=axolive] (analyse.south) -- (analyse.south |- ideal.north);
 \end{tikzpicture}
 \caption{An Axiom episode. The agent sees only the pilot data and the tools; the mechanism stays hidden until scoring. Re-analysing the agent's own data with an ideal analyst splits every failure into a design part and an analysis part.}
 \label{fig:overview}
@@ -146,10 +146,11 @@ Practice follows a saturating learning curve, so a linear time covariate cannot 
   \draw[edge] (P) to[bend right=12] (Y);
   \draw[edge] (L) -- (T);
   \draw[edge] (L) -- (B);
-  \coordinate (int) at ($(S)!0.5!(Y)+(0,0.55)$);
-  \draw[edge] ($(L)!0.35!(S)$) to[out=0,in=180] (int) node[font=\scriptsize,above=1pt]{$S{\times}L$} -- ($(Y)+(-0.42,0.2)$);
+  \node[draw=axolive,fill=axolive!10,diamond,inner sep=1.2pt,font=\scriptsize] (SL) at (1.75,0.75) {$S{\times}L$};
+  \draw[axolive,line width=0.5pt] (L) -- (SL) -- (S);
+  \draw[edge] (SL) -- (Y);
   \draw[trap] (B) -- node[font=\scriptsize,above right=-1pt,text=axclay]{contaminates} (T);
-  \draw[trap] (P) to[bend left=35] node[font=\scriptsize,left,text=axclay,align=right]{active block\\always second} (S);
+  \draw[axclay,dashed,line width=0.7pt] (P) to[bend left=40] node[font=\scriptsize,left,text=axclay,align=right]{confounded:\\active block\\always second} (S);
 \end{tikzpicture}
 \caption{The hypothesis family. Solid arrows are the six candidate edges; each task sets which ones exist. Dashed arrows are the two planted traps: practice tied to stimulation order, and blinks leaking into frontal theta. Each trap has a held-out mirror task with the same pilot data and the opposite truth.}
 \label{fig:graph}

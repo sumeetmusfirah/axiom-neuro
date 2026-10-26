@@ -135,6 +135,17 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
     return studies + items + W.pending(cfg, rows, done), g
 
 
+# Execution order only (what gets run is unchanged): author studies first, then the headline cell,
+# so the leaderboard fills before the secondary tracks. Alphabetical order ran "sachs" and "abstract" first.
+TRACK_RANK = {"synthetic": 0, "semisynthetic": 1, "sachs": 2}
+LABEL_RANK = {"named": 0, "abstract": 1}
+
+
+def _priority(it: dict) -> tuple:
+    return (0 if it.get("study") else 1, bool(it.get("wave")), it["seed"], TRACK_RANK.get(it["track"], 9),
+            LABEL_RANK.get(it["labels"], 9), it["task_id"], it["agent"])
+
+
 def make_plan(cfg: dict, rows: list[dict]) -> dict:
     items, g = pending_items(cfg, rows)
     auto = cfg["automation"]
@@ -145,7 +156,7 @@ def make_plan(cfg: dict, rows: list[dict]) -> dict:
     shards = []
     for model, its in by_model.items():
         # Author studies first: they are the experiments the author is waiting on.
-        its.sort(key=lambda x: (0 if x.get("study") else 1, x["seed"], x["track"], x["labels"], x["task_id"], x["agent"]))
+        its.sort(key=_priority)
         cur, used = [], 0.0
         for it in its:
             if cur and used + it["est_min"] > cap_min:

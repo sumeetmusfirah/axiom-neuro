@@ -68,3 +68,13 @@ def test_leaderboard_replaces_only_its_block(tmp_path):
     text = readme.read_text()
     assert text.startswith("intro\n") and text.endswith(f"{R.BOARD_END}\noutro\n")
     assert "old" not in text and "scripted (reference)" in text
+
+
+def test_plan_runs_the_headline_cell_first():
+    from axiom_neuro.planner import _priority
+    items = [{"seed": 0, "track": t, "labels": lab, "task_id": "x", "agent": "llm"}
+             for t in ("sachs", "semisynthetic", "synthetic") for lab in ("abstract", "named")]
+    items.append({"seed": 0, "track": "synthetic", "labels": "named", "task_id": "w01-x", "agent": "llm", "wave": 1})
+    order = sorted(items, key=_priority)
+    assert (order[0]["track"], order[0]["labels"]) == ("synthetic", "named") and not order[0].get("wave")
+    assert order[-1].get("wave") == 1

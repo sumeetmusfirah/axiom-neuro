@@ -122,7 +122,14 @@ def test_committed_manifest_matches_config():
         pytest.skip("task set not frozen yet")
     cfg = load_config()["tasks"]
     regen = build_tasks(cfg["seed"], cfg["instances_per_type"], cfg["budget_participant_hours"])
-    assert [t.to_json() for t in regen] == [t.to_json() for t in load_tasks()]
+    frozen = load_tasks()
+    assert [(t.task_id, t.seed, sorted(t.mechanism.edges)) for t in regen] == \
+        [(t.task_id, t.seed, sorted(t.mechanism.edges)) for t in frozen]
+    # Effect sizes may differ in the last bit across CPU architectures (ARM vs x86 FMA);
+    # the frozen file, not regeneration, is what runs and is hashed.
+    for a, b in zip(regen, frozen):
+        for k, v in a.mechanism.effects.items():
+            assert v == pytest.approx(b.mechanism.effects[k], rel=1e-9, abs=1e-12)
     assert is_frozen()
 
 

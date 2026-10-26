@@ -58,6 +58,16 @@
   .loop p { margin: 0; color: var(--ink-2); }
   .loop .state { display: inline-block; margin-top: 10px; font: 600 12px/1 var(--sans); padding: 6px 9px; border-radius: 999px; background: var(--chip); color: var(--ink); }
   .dag { font-size: 12px; color: var(--ink-2); }
+  svg.diagram { width: 100%; height: auto; display: block; margin: 8px 0 4px; }
+  svg.diagram text { font-family: var(--sans); fill: var(--ink); }
+  svg.diagram .sub { fill: var(--ink-2); font-size: 12px; }
+  svg.diagram .node { fill: var(--surface); stroke: var(--rule); stroke-width: 1.5; }
+  svg.diagram .cause { stroke: var(--accent); }
+  svg.diagram .edge { stroke: var(--ink-2); stroke-width: 1.6; fill: none; }
+  svg.diagram .trap { stroke: var(--accent-2); stroke-width: 1.6; fill: none; stroke-dasharray: 5 4; }
+  svg.diagram .feed { stroke: var(--accent); stroke-width: 1.6; fill: none; stroke-dasharray: 5 4; }
+  svg.diagram .lbl { font-size: 12px; fill: var(--ink-2); }
+  svg.diagram .lbl2 { font-size: 12px; fill: var(--accent-2); }
   .num { text-align: right; font-variant-numeric: tabular-nums; }
   code { font: 14px var(--mono); background: var(--chip); padding: 2px 6px; border-radius: 5px; }
   footer { margin-top: 72px; font: 14px/1.6 var(--sans); color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 20px; }
@@ -78,20 +88,49 @@
   </header>
 
   <figure id="hero">
-    <img src="animations/episode.gif" alt="Animated replay of a language model running experiments; bars show what the data support at each step, ticks show the truth.">
-    <figcaption>One episode, replayed. Blue bars: what the data gathered so far actually support. Black ticks: the hidden truth. Orange diamonds at the end: what the model claimed.</figcaption>
+    <img src="animations/episode.gif" alt="Animated replay of an agent running experiments; bars show what the data support at each step, ticks show the truth."
+         onerror="this.onerror=null; this.src='animations/demo_reference.gif'; document.getElementById('hero-note').hidden=false;">
+    <figcaption>One episode, replayed. Blue bars: what the data gathered so far actually support. Black ticks: the hidden truth. Orange diamonds at the end: what the agent claimed.
+      <span id="hero-note" hidden>This is the scripted reference agent on the practice trap. It checks the session order, runs a counterbalanced experiment and gets all six edges right. A language model's episode replaces it once results land.</span></figcaption>
   </figure>
 
   <div class="stats" id="stats"></div>
 
   <h2>The lab</h2>
   <p>Participants do a flanker task under low or high working-memory load, with active or sham transcranial stimulation, optionally with EEG. Six causal edges might be real: load slows people; stimulation helps everywhere, or only under high load; practice speeds people up; load changes frontal theta; load changes blinking. Each task hides one combination.</p>
+  <svg class="diagram" viewBox="0 0 720 340" role="img" aria-label="Causal diagram: load may affect blinking, frontal theta and response time; stimulation, the stimulation-by-load interaction and practice may affect response time; blinks contaminate measured theta.">
+    <defs>
+      <marker id="lag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-2)"/></marker>
+      <marker id="lao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent-2)"/></marker>
+      <marker id="lab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+    </defs>
+    <path d="M170,100 L477,44" class="edge" marker-end="url(#lag)"/>
+    <path d="M170,112 L477,136" class="edge" marker-end="url(#lag)"/>
+    <path d="M170,128 L477,244" class="edge" marker-end="url(#lag)"/>
+    <path d="M170,118 L356,166" class="edge" marker-end="url(#lag)"/>
+    <path d="M170,214 L356,180" class="edge" marker-end="url(#lag)"/>
+    <path d="M388,180 L477,236" class="edge" marker-end="url(#lag)"/>
+    <path d="M170,226 L477,256" class="edge" marker-end="url(#lag)"/>
+    <path d="M170,300 L477,268" class="edge" marker-end="url(#lag)"/>
+    <path d="M555,68 L555,102" class="trap" marker-end="url(#lao)"/>
+    <text x="566" y="90" class="lbl2">blinks contaminate the EEG</text>
+    <g><circle cx="372" cy="174" r="16" class="node"/><text x="372" y="179" text-anchor="middle" font-size="15">×</text></g>
+    <text x="372" y="146" text-anchor="middle" class="lbl">S × L</text>
+    <g><rect x="20" y="84" width="150" height="52" rx="10" class="node cause"/><text x="95" y="107" text-anchor="middle" font-size="15" font-weight="600">Load</text><text x="95" y="125" text-anchor="middle" class="sub">working memory, L</text></g>
+    <g><rect x="20" y="194" width="150" height="52" rx="10" class="node cause"/><text x="95" y="217" text-anchor="middle" font-size="15" font-weight="600">Stimulation</text><text x="95" y="235" text-anchor="middle" class="sub">active vs sham tES, S</text></g>
+    <g><rect x="20" y="274" width="150" height="52" rx="10" class="node cause"/><text x="95" y="297" text-anchor="middle" font-size="15" font-weight="600">Practice</text><text x="95" y="315" text-anchor="middle" class="sub">session order, P</text></g>
+    <g><rect x="480" y="14" width="150" height="52" rx="10" class="node"/><text x="555" y="37" text-anchor="middle" font-size="15" font-weight="600">Blinking</text><text x="555" y="55" text-anchor="middle" class="sub">B</text></g>
+    <g><rect x="480" y="104" width="150" height="52" rx="10" class="node"/><text x="555" y="127" text-anchor="middle" font-size="15" font-weight="600">Frontal theta</text><text x="555" y="145" text-anchor="middle" class="sub">EEG, T</text></g>
+    <g><rect x="480" y="224" width="150" height="52" rx="10" class="node"/><text x="555" y="247" text-anchor="middle" font-size="15" font-weight="600">Response time</text><text x="555" y="265" text-anchor="middle" class="sub">flanker task, Y</text></g>
+    <text x="700" y="334" text-anchor="end" class="lbl">Grey arrows: the six candidate edges. Each task hides which are real.</text>
+  </svg>
   <p>The agent starts with a pilot study, 30 participant-hours of budget, and the tools a human researcher would use: experiment design, regressions with cluster-robust errors, an order-confound check and an artifact check. It must submit a claim and a confidence for every edge.</p>
 
   <h2>The traps</h2>
   <p><b>Practice disguised as stimulation.</b> In the pilot, the active-stimulation block always came second, so practice alone makes stimulation look effective. Only a counterbalanced or between-subjects experiment reveals the truth.</p>
   <p><b>Blinks disguised as brain activity.</b> High load increases blinking, and blinks inflate frontal theta. Only artifact correction or blink-free analysis shows that the "neural" effect isn't there.</p>
-  <p>Each trap has a mirror task with the <em>same</em> pilot data and the <em>opposite</em> truth, so an agent can't score by distrusting every pilot.</p>
+  <p>Each trap has a mirror task with the <em>same</em> kind of pilot and the <em>opposite</em> truth, so an agent can't score by distrusting every pilot.</p>
+  <figure data-fig="fig_trap_mechanics"><img src="figures/fig_trap_mechanics.png" alt="Pilot estimates versus careful-experiment estimates for both traps and their mirror tasks."><figcaption>Both traps, computed live from the simulator. Grey: the effect the pilot suggests. Blue: what a careful experiment recovers. On the trap tasks (top of each panel) the effect disappears; on the mirrors (bottom) it survives. 95% CIs across simulated participants.</figcaption></figure>
 
   <h2>Grounded in real people</h2>
   <p>The simulator's response times, accuracy, individual differences, blink rates and EEG noise are fitted to the <a href="https://erpinfo.org/erp-core">ERP CORE</a> flanker dataset (40 participants) and checked by 5-fold cross-validation: each of the 40 participants is predicted by a simulator that never saw them. A second track runs every experiment on real ERP CORE trials with known effects injected on top.</p>
@@ -117,6 +156,31 @@
 
   <h2>How it keeps going</h2>
   <p>The preregistered study is finite: its stopping rule closes every cell. Three loops then add real work on their own, and none of them touches the preregistered results.</p>
+  <svg class="diagram" viewBox="0 0 720 250" role="img" aria-label="Automation loop: plan, run, collect, report, publish, repeating every six hours; replication waves and model intake feed the plan; a drained queue produces a data release.">
+    <defs>
+      <marker id="log" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-2)"/></marker>
+      <marker id="loo" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent-2)"/></marker>
+      <marker id="lob" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+    </defs>
+    <path d="M122,76 L144,76" class="edge" marker-end="url(#log)"/>
+    <path d="M262,76 L284,76" class="edge" marker-end="url(#log)"/>
+    <path d="M402,76 L424,76" class="edge" marker-end="url(#log)"/>
+    <path d="M542,76 L564,76" class="edge" marker-end="url(#log)"/>
+    <path d="M624,48 C624,6 64,6 64,46" class="edge" marker-end="url(#log)"/>
+    <text x="344" y="38" text-anchor="middle" class="lbl">every 6 hours</text>
+    <text x="400" y="132" text-anchor="middle" class="lbl">free runners · local open-weight models · commits only new results</text>
+    <path d="M50,190 L50,106" class="feed" marker-end="url(#lob)"/>
+    <path d="M340,190 L340,160 L96,160 L96,106" class="feed" marker-end="url(#lob)"/>
+    <path d="M624,104 L624,188" class="feed" marker-end="url(#lob)"/>
+    <g><rect x="6" y="50" width="116" height="52" rx="10" class="node cause"/><text x="64" y="73" text-anchor="middle" font-size="14" font-weight="600">Plan</text><text x="64" y="91" text-anchor="middle" class="sub">gates + queue</text></g>
+    <g><rect x="146" y="50" width="116" height="52" rx="10" class="node"/><text x="204" y="73" text-anchor="middle" font-size="14" font-weight="600">Run</text><text x="204" y="91" text-anchor="middle" class="sub">parallel shards</text></g>
+    <g><rect x="286" y="50" width="116" height="52" rx="10" class="node"/><text x="344" y="73" text-anchor="middle" font-size="14" font-weight="600">Collect</text><text x="344" y="91" text-anchor="middle" class="sub">public ledger</text></g>
+    <g><rect x="426" y="50" width="116" height="52" rx="10" class="node"/><text x="484" y="73" text-anchor="middle" font-size="14" font-weight="600">Report</text><text x="484" y="91" text-anchor="middle" class="sub">tests + figures</text></g>
+    <g><rect x="566" y="50" width="116" height="52" rx="10" class="node"/><text x="624" y="73" text-anchor="middle" font-size="14" font-weight="600">Publish</text><text x="624" y="91" text-anchor="middle" class="sub">site + paper</text></g>
+    <g><rect x="6" y="190" width="200" height="48" rx="10" class="node cause"/><text x="106" y="211" text-anchor="middle" font-size="13" font-weight="600">Replication waves</text><text x="106" y="229" text-anchor="middle" class="sub">fresh tasks every 4 weeks</text></g>
+    <g><rect x="240" y="190" width="200" height="48" rx="10" class="node cause"/><text x="340" y="211" text-anchor="middle" font-size="13" font-weight="600">Model intake</text><text x="340" y="229" text-anchor="middle" class="sub">next open model, weekly</text></g>
+    <g><rect x="524" y="190" width="190" height="48" rx="10" class="node cause"/><text x="619" y="211" text-anchor="middle" font-size="13" font-weight="600">Data release</text><text x="619" y="229" text-anchor="middle" class="sub">when the queue drains</text></g>
+  </svg>
   <div class="engine" id="engine">
     <div class="loop"><h3>Engine · every 6 hours</h3><p>Plan what's left, run it in parallel on free runners with local open-weight models, merge, report, commit only new results.</p><span class="state" id="st-engine">–</span></div>
     <div class="loop"><h3>Replication waves · every 4 weeks</h3><p>Once the queue is empty, freeze 30 fresh tasks (seeds fixed in advance) and run every agent on them.</p><span class="state" id="st-waves">–</span></div>

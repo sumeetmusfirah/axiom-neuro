@@ -250,6 +250,77 @@ def fig_validation():
     return _save(fig, "fig_validation")
 
 
+def _subject_effect(df, factor: str, outcome: str, exclude_blinks: bool = False):
+    """Per-participant difference (factor=1 minus factor=0), mean and 95% CI across participants."""
+    d = df[df["blink"] == 0] if exclude_blinks else df
+    m = d.groupby(["subject", factor])[outcome].mean().unstack()
+    diff = (m[1] - m[0]).dropna()
+    half = 1.96 * diff.std(ddof=1) / np.sqrt(len(diff))
+    return float(diff.mean()), float(half)
+
+
+def fig_trap_mechanics(rows=None, cfg=None) -> list[str]:
+    """How each planted trap works, computed live from the simulator (no ledger needed).
+
+    For each trap task and its mirror: the effect the pilot suggests, and the effect a careful
+    experiment recovers. The pilot is identical within a pair; only the truth differs.
+    """
+    from .env import LabEnv
+    from .params import load_params
+    from .tasks import load_tasks
+    try:
+        tasks = load_tasks()
+    except FileNotFoundError:
+        return []
+    params = load_params()
+    first = {}
+    for t in tasks:
+        first.setdefault(t.task_type, t)
+    careful_s = {"factors": ["S"], "fixed": {"L": 1}, "assignment": "within", "order": "counterbalanced",
+                 "n_participants": 32, "trials_per_cell": 80, "eeg": False, "ica": False}
+    careful_l = {"factors": ["L"], "fixed": {"S": 0}, "assignment": "within", "order": "counterbalanced",
+                 "n_participants": 32, "trials_per_cell": 80, "eeg": True, "ica": True}
+    panels = [
+        ("Practice disguised as stimulation", "Speed-up from active stimulation (ms)", "S", "rt", -1,
+         [("practice_confound", "truth: no effect"), ("stim_main", "truth: real effect")],
+         ("Pilot: active block always second", "Counterbalanced experiment"), careful_s, False),
+        ("Blinks disguised as brain activity", "Load effect on frontal theta (a.u.)", "L", "theta", 1,
+         [("blink_artifact", "truth: no effect"), ("neural_theta", "truth: real effect")],
+         ("Pilot: no artifact correction", "New experiment with ICA"), careful_l, False),
+    ]
+    fig, axes = plt.subplots(1, 2, figsize=(10, 3.6))
+    for ax, (title, xlabel, factor, outcome, sign, pair, (lab_a, lab_b), careful, blink) in zip(axes, panels):
+        ys, labels = [], []
+        for k, (tt, truth_note) in enumerate(pair):
+            if tt not in first:
+                continue
+            env = LabEnv(first[tt], params, "synthetic", "named", run_seed=0)
+            pilot = env.collected()[0].data
+            if blink:
+                est = [_subject_effect(pilot, factor, outcome), _subject_effect(pilot, factor, outcome, True)]
+            else:
+                env.step("design_experiment", careful)
+                est = [_subject_effect(pilot, factor, outcome), _subject_effect(env.collected()[-1].data, factor, outcome)]
+            for j, ((m, h), color, lab) in enumerate(zip(est, (GRAY, BLUE), (lab_a, lab_b))):
+                y = k * 3 + j
+                ax.errorbar(sign * m, y, xerr=h, fmt="o", color=color, ms=7, capsize=0, lw=2)
+                ys.append(y)
+                labels.append(f"{lab}")
+            ax.text(1.0, k * 3 + 0.5, truth_note, transform=ax.get_yaxis_transform(), ha="right", va="center",
+                    fontsize=8.5, color=INK2, style="italic")
+        ax.axvline(0, color=INK, lw=0.8)
+        ax.set_yticks(ys, labels, fontsize=9)
+        ax.invert_yaxis()
+        ax.set_title(title)
+        ax.set_xlabel(xlabel)
+        ax.grid(axis="y", visible=False)
+    fig.text(0.06, -0.06, "Each panel: the trap task (top pair) and its held-out mirror (bottom pair) open with the same kind of pilot. "
+             "Grey = what the pilot shows; blue = what a careful analysis shows. 95% CIs across simulated participants.",
+             fontsize=8.5, color=INK2, ha="left", wrap=True)
+    fig.tight_layout(w_pad=4)
+    return _save(fig, "fig_trap_mechanics")
+
+
 def build_all() -> list[str]:
     cfg = load_config()
     rows = L.ok_rows(L.primary(L.read_rows()))
@@ -257,4 +328,5 @@ def build_all() -> list[str]:
     for f in (fig_agents, fig_decomposition, fig_traps, fig_scale, fig_bio):
         out += f(rows, cfg)
     out += fig_validation()
+    out += fig_trap_mechanics()
     return out

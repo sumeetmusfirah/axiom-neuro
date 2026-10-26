@@ -122,7 +122,7 @@ jobs:
           pattern: shard-*
           path: results/
           merge-multiple: true
-      - run: .venv/bin/axiom collect && .venv/bin/axiom report
+      - run: .venv/bin/axiom collect && .venv/bin/axiom report && .venv/bin/axiom study-report
       - name: Commit results (only when there is new data)
         run: |
           git config user.name "axiom-bot"

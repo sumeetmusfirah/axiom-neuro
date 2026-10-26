@@ -56,6 +56,10 @@ My [previous study](https://github.com/Project-Aletheia-org/aletheia-pressure-ev
 
 *Computed from the simulator. Grey: the effect the pilot suggests. Blue: what a careful experiment recovers. The effect vanishes on each trap task and survives on its held-out mirror.*
 
+## Run your own experiment
+
+Open a **[New experiment](https://github.com/sumeetmusfirah/axiom-neuro/issues/new?template=experiment.yml)** issue: a question, a hypothesis, which models, and what to change (an extra instruction, more turns, a different temperature or budget). The issue is turned into a registered study file, the engine runs it ahead of the main queue, and the result (paired against the main study, with a 95% CI) is posted back to the issue, which then closes itself. See [studies/](studies/).
+
 ## The paper
 
 The LaTeX source is in [`paper/`](paper/): `main.tex`, `refs.bib`, and tables and figures generated from the results ledger. Every push rebuilds the PDF, an arXiv tarball and an Overleaf zip. [Open in Overleaf](https://www.overleaf.com/docs?snip_uri=https://sumeetmusfirah.github.io/axiom-neuro/axiom-neuro-overleaf.zip&engine=pdflatex) imports the current version as a new project, figures included.

@@ -63,6 +63,7 @@ The primary study is finite by design: the stopping rule closes every cell. Thre
 - **Waves never touch the preregistered results.** Wave rows carry `wave = n`. `ledger.primary()` filters them out of every preregistered analysis, figure and paper table, and they appear only in the exploratory R1 section.
 - **Added models never touch the preregistered tests.** They carry `added = <date>`, appear in the tables with a dagger, and are excluded from H1–H6 and B1–B3.
 - **Every model row names its weights.** The runner records the Ollama digest of the model it actually ran (`model_digest`), and intake pins the registry digest in the config.
+- **Author studies jump the queue.** A "New experiment" issue (or a hand-written `studies/<id>.toml`) is registered by its commit, planned ahead of all other work, run with its changes (`instruction`, `max_turns`, `temperature`, `budget_participant_hours`), and reported in `results/studies/<id>.md`, paired by task against the main study. `study.yml` posts the report to the issue and closes it. Study rows carry `study = <id>` and a distinct key, so `ledger.primary()` excludes them.
 - **Bounded.** At most `max_waves` waves, at most one model per week, `max_parallel` jobs. Set `enabled = false` under `[waves]` or `[intake]` to stop either loop.
 
 ## Why it keeps running and when it stops

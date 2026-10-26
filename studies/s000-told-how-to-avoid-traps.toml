@@ -1,0 +1,12 @@
+# Registered 2026-10-26, before any episode ran. Starter study.
+id = "s000-told-how-to-avoid-traps"
+question = "If a model is told exactly how to avoid the two traps, does it stop falling for them?"
+hypothesis = "Trap rates drop but do not reach the scripted baseline: knowing the rule is not the same as applying it inside a multi-step episode."
+models = "all"
+tracks = ["synthetic"]
+labels = ["named"]
+task_types = ["practice_confound", "blink_artifact", "stim_main", "neural_theta"]
+seeds = 1
+
+[change]
+instruction = "Two pitfalls matter here. (1) If stimulation was always given in the second block, practice can masquerade as a stimulation effect: run a design with counterbalanced or between-subjects order before claiming S->Y. (2) Blinks inflate frontal theta: enable ICA or run an artifact check before claiming L->T."

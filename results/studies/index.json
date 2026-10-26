@@ -1,0 +1,10 @@
+[
+  {
+    "id": "s000-told-how-to-avoid-traps",
+    "question": "If a model is told exactly how to avoid the two traps, does it stop falling for them?",
+    "issue": null,
+    "n_done": 0,
+    "n_expected": 200,
+    "complete": false
+  }
+]

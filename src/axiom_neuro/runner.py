@@ -39,10 +39,33 @@ def _confound_handled(env: LabEnv) -> bool | None:
     return None
 
 
+def _study_change(item) -> dict:
+    if not item.get("study"):
+        return {}
+    from .studies import get
+    return get(item["study"])["change"]
+
+
 def _llm_client(item, cfg, client_factory):
     llm = cfg["llm"]
+    temp = _study_change(item).get("temperature", llm["temperature"])
     return (client_factory or (lambda m: OllamaClient(
-        m, llm["temperature"], llm["num_predict"], llm["request_timeout_s"])))(item["model"])
+        m, temp, llm["num_predict"], llm["request_timeout_s"])))(item["model"])
+
+
+def _run_llm(env, item, cfg, client):
+    ch = _study_change(item)
+    return run_llm(env, client, item["seed"], ch.get("max_turns", cfg["llm"]["max_turns"]), ch.get("instruction", ""))
+
+
+def _with_budget(task, item):
+    b = _study_change(item).get("budget_participant_hours")
+    if b is None or item.get("domain") == "bio":  # bio budgets are in cells, not participant-hours
+        return task
+    import copy
+    t = copy.copy(task)
+    t.budget = float(b)
+    return t
 
 
 _DIGESTS: dict[str, str | None] = {}
@@ -74,7 +97,7 @@ def run_bio_item(item: dict, task, cfg: dict, client_factory=None) -> dict:
         BL.run_scripted(env, item["seed"])
     elif item["agent"] == "llm":
         client = _llm_client(item, cfg, client_factory)
-        extra = run_llm(env, client, item["seed"], cfg["llm"]["max_turns"])
+        extra = _run_llm(env, item, cfg, client)
         extra["model_digest"] = _digest(client)
     else:
         raise ValueError(f"agent {item['agent']} not available in the bio lab")
@@ -92,6 +115,7 @@ def run_bio_item(item: dict, task, cfg: dict, client_factory=None) -> dict:
 
 
 def run_item(item: dict, task, params, cfg: dict, client_factory=None) -> dict:
+    task = _with_budget(task, item)
     if item.get("domain") == "bio":
         return run_bio_item(item, task, cfg, client_factory)
     env = LabEnv(task, params, item["track"], item["labels"], run_seed=item["seed"])
@@ -104,7 +128,7 @@ def run_item(item: dict, task, params, cfg: dict, client_factory=None) -> dict:
         B.run_oracle(env, item["seed"])
     elif item["agent"] == "llm":
         client = _llm_client(item, cfg, client_factory)
-        extra = run_llm(env, client, item["seed"], cfg["llm"]["max_turns"])
+        extra = _run_llm(env, item, cfg, client)
         extra["model_digest"] = _digest(client)
     else:
         raise ValueError(f"unknown agent {item['agent']}")
@@ -156,6 +180,8 @@ def run_shard(plan: dict, shard: int, out_path: Path, budget_min: float, cfg: di
             t = tasks[item["task_id"]]
             if item.get("wave"):
                 base["wave"] = item["wave"]
+            if item.get("study"):
+                base["study"] = item["study"]
             base.update({"domain": item.get("domain", "neuro"), "task_type": t.task_type,
                          "split": t.split if item.get("domain") == "bio" else TASK_TYPES[t.task_type].split,
                          "attempt_id": uuid.uuid4().hex[:12],

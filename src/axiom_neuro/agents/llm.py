@@ -99,12 +99,14 @@ def parse_action(text: str, actions=ACTIONS) -> tuple[str, dict, str]:
     return action, args, str(obj.get("thought", ""))[:500]
 
 
-def run_llm(env, client: ChatClient, seed: int, max_turns: int = 12) -> dict:
-    """Run one episode in any lab (neuro or bio). The env holds actions and the submission."""
+def run_llm(env, client: ChatClient, seed: int, max_turns: int = 12, instruction: str = "") -> dict:
+    """Run one episode in any lab (neuro or bio). The env holds actions and the submission.
+    ``instruction`` (author studies only) is appended to the system prompt."""
     actions = getattr(env, "ACTIONS", ACTIONS)
     protocol = env.protocol() if hasattr(env, "protocol") else PROTOCOL
     messages = [
-        {"role": "system", "content": "You are a careful experimental scientist. " + protocol},
+        {"role": "system", "content": "You are a careful experimental scientist. " + protocol
+         + (f"\n\nAdditional instruction: {instruction}" if instruction else "")},
         {"role": "user", "content": env.briefing() + "\n\nTurn 1 of " + str(max_turns) + ". Your move."},
     ]
     parse_failures, consecutive = 0, 0

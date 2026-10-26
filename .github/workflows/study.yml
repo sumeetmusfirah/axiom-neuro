@@ -1,0 +1,76 @@
+# Author experiments: an issue from the "New experiment" form becomes studies/<id>.toml (its
+# registration), the engine runs it first on the next cycle, and the result is posted back.
+name: study
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_run:
+    workflows: [experiments]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: experiments-config
+  cancel-in-progress: false
+
+jobs:
+  register:
+    if: github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'experiment') && github.event.issue.user.login == github.repository_owner
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e .
+      - name: Write the study file
+        id: study
+        env:
+          BODY: ${{ github.event.issue.body }}
+          TITLE: ${{ github.event.issue.title }}
+        run: |
+          printf '%s' "$BODY" > /tmp/body.md
+          .venv/bin/axiom study-from-issue --body /tmp/body.md --number ${{ github.event.issue.number }} --title "$TITLE" | tee /tmp/study.toml
+      - name: Commit, start the engine, and reply
+        if: steps.study.outputs.id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          id=${{ steps.study.outputs.id }}
+          git config user.name "axiom-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add studies/
+          git commit -m "study: register $id (#${{ github.event.issue.number }})"
+          for i in 1 2 3 4 5; do git pull --rebase && git push && break; sleep $((i * 10)); done
+          n=$(.venv/bin/python -c "from axiom_neuro import studies as S; from axiom_neuro.config import load_config; s=S.get('$id'); print(len(S.pending(load_config(), set(), S._tasks(), S._bio_tasks(s))))")
+          { echo "Registered as \`studies/$id.toml\` in $(git rev-parse --short HEAD), before any episode ran:"; echo; echo '```toml'; cat studies/$id.toml; echo '```'; echo; echo "$n episodes queued ahead of the main study. I'll post the result here when they finish."; } > /tmp/reply.md
+          gh issue comment ${{ github.event.issue.number }} --body-file /tmp/reply.md
+          gh workflow run experiments.yml
+
+  announce:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: astral-sh/setup-uv@v6
+      - run: uv venv --python 3.11 && uv pip install -e .
+      - id: done
+        run: .venv/bin/axiom study-announce
+      - name: Post results to finished studies' issues
+        if: steps.done.outputs.done != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for pair in ${{ steps.done.outputs.done }}; do
+            n=${pair%%:*}; id=${pair#*:}
+            [ "$(gh issue view $n --json state -q .state)" = "OPEN" ] || continue
+            gh issue comment $n --body-file results/studies/$id.md
+            gh issue close $n --reason completed
+          done

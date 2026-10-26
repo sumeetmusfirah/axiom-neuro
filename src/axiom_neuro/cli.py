@@ -148,6 +148,45 @@ def cmd_report(a):
     return 0
 
 
+def cmd_study_report(a):
+    from .studies import report
+    for r in report():
+        print(f"{r['id']}: {r['n_done']}/{r['n_expected']} episodes" + (" (complete)" if r["complete"] else ""))
+    return 0
+
+
+def cmd_study_from_issue(a):
+    """Write studies/<id>.toml from an issue-form body; prints the id for the workflow."""
+    from pathlib import Path
+    from .studies import STUDIES, from_issue
+    sid, text = from_issue(Path(a.body).read_text(), a.number, a.title)
+    STUDIES.mkdir(exist_ok=True)
+    path = STUDIES / f"{sid}.toml"
+    if path.exists():
+        print(f"exists={sid}")
+        return 0
+    path.write_text(text)
+    _gh_output("id", sid)
+    print(text)
+    return 0
+
+
+def cmd_study_announce(a):
+    """List complete studies whose issue has not been answered yet, for the workflow to comment on."""
+    from .studies import OUT
+    idx = json.loads((OUT / "index.json").read_text()) if (OUT / "index.json").exists() else []
+    done = [s for s in idx if s["complete"] and s.get("issue")]
+    _gh_output("done", " ".join(f"{s['issue']}:{s['id']}" for s in done))
+    return 0
+
+
+def _gh_output(k, v):
+    import os
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"{k}={v}\n")
+
+
 def cmd_figures(a):
     from .animate import build_all as anims
     from .figures import build_all as figs
@@ -195,6 +234,11 @@ def main(argv=None) -> int:
     s = sub.add_parser("release-notes"); s.add_argument("--out", default="release-notes.md")
     s.set_defaults(f=cmd_release_notes)
     sub.add_parser("collect").set_defaults(f=cmd_collect)
+    sub.add_parser("study-report").set_defaults(f=cmd_study_report)
+    sub.add_parser("study-announce").set_defaults(f=cmd_study_announce)
+    s = sub.add_parser("study-from-issue"); s.add_argument("--body", required=True)
+    s.add_argument("--number", type=int, required=True); s.add_argument("--title", default="")
+    s.set_defaults(f=cmd_study_from_issue)
     sub.add_parser("report").set_defaults(f=cmd_report)
     s = sub.add_parser("figures"); s.add_argument("--no-animations", action="store_true"); s.set_defaults(f=cmd_figures)
     sub.add_parser("paper-tables").set_defaults(f=cmd_paper_tables)

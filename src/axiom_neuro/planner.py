@@ -18,6 +18,7 @@ from collections import defaultdict
 import numpy as np
 
 from . import ledger as L
+from . import studies as S
 from . import waves as W
 from .agents.baselines import ORACLE_CACHE
 from .params import FITTED_PATH, load_params
@@ -109,8 +110,9 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
                                       "domain": "bio"})
     if not g["baseline_order"]["passed"]:
         return items, g
+    studies = S.pending(cfg, done, tasks, bio_tasks if bio_on else [])
     if items:
-        return items + W.pending(cfg, rows, done), g
+        return studies + items + W.pending(cfg, rows, done), g
 
     sc = cfg["seeds"]
     ok = L.ok_rows(L.primary(rows))
@@ -130,7 +132,7 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
                     if seed + 1 >= sc["min_seeds"] and \
                             _halfwidth([r["scores"]["brier"] for r in cell]) <= sc["ci_halfwidth_target"]:
                         break  # precise enough: stop adding seeds to this cell
-    return items + W.pending(cfg, rows, done), g
+    return studies + items + W.pending(cfg, rows, done), g
 
 
 def make_plan(cfg: dict, rows: list[dict]) -> dict:
@@ -142,7 +144,8 @@ def make_plan(cfg: dict, rows: list[dict]) -> dict:
         by_model[it["model"]].append(it)
     shards = []
     for model, its in by_model.items():
-        its.sort(key=lambda x: (x["seed"], x["track"], x["labels"], x["task_id"], x["agent"]))
+        # Author studies first: they are the experiments the author is waiting on.
+        its.sort(key=lambda x: (0 if x.get("study") else 1, x["seed"], x["track"], x["labels"], x["task_id"], x["agent"]))
         cur, used = [], 0.0
         for it in its:
             if cur and used + it["est_min"] > cap_min:

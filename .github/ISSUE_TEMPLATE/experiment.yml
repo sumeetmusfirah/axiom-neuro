@@ -1,0 +1,77 @@
+name: New experiment
+description: Decide on an experiment. The engine registers it, runs it on the next cycle, and posts the result here.
+title: "Experiment: "
+labels: [experiment]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill in the question and pick what to change. Everything else has a sensible default.
+        When you submit, a study file is committed (that commit is the registration), the engine
+        runs it ahead of the main queue, and this issue gets the result and closes itself.
+  - type: input
+    id: question
+    attributes:
+      label: Question
+      placeholder: Do models avoid the practice trap if told to counterbalance?
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hypothesis
+      description: What you expect, written before it runs. Optional but it makes the result worth more.
+  - type: dropdown
+    id: models
+    attributes:
+      label: Models
+      multiple: true
+      options: [all, "llama3.2:3b", "qwen3:4b", "gemma3:4b", "mistral:7b", "qwen3:14b"]
+      default: 0
+  - type: dropdown
+    id: tracks
+    attributes:
+      label: Tracks
+      multiple: true
+      options: [synthetic, semisynthetic, sachs]
+      default: 0
+  - type: dropdown
+    id: labels
+    attributes:
+      label: Labels
+      multiple: true
+      options: [named, abstract]
+      default: 0
+  - type: dropdown
+    id: task_types
+    attributes:
+      label: Task types
+      description: Leave as "all" or narrow to the tasks your question is about.
+      multiple: true
+      options: [all, load_only, interaction, practice_confound, blink_artifact, stim_main, neural_theta]
+      default: 0
+  - type: input
+    id: instruction
+    attributes:
+      label: Instruction
+      description: Optional text added to the model's system prompt (e.g. a hint, a strategy, a persona).
+  - type: input
+    id: max_turns
+    attributes:
+      label: Max turns
+      description: Optional. Main study uses 12.
+  - type: input
+    id: temperature
+    attributes:
+      label: Temperature
+      description: Optional. Main study uses 0.7.
+  - type: input
+    id: budget
+    attributes:
+      label: Budget participant hours
+      description: Optional, neuro tracks only. Main study uses 30.
+  - type: input
+    id: seeds
+    attributes:
+      label: Seeds
+      description: Repeats per task. Default 1.

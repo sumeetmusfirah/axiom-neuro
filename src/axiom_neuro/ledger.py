@@ -39,8 +39,9 @@ def ok_rows(rows: list[dict]) -> list[dict]:
 
 
 def primary(rows: list[dict]) -> list[dict]:
-    """The preregistered study only. Replication-wave rows (``wave`` >= 1) are analysed separately."""
-    return [r for r in rows if not r.get("wave")]
+    """The preregistered study only. Replication-wave rows (``wave`` >= 1) and author studies
+    (``study``) are analysed separately."""
+    return [r for r in rows if not r.get("wave") and not r.get("study")]
 
 
 def collect(incoming: Path = INCOMING, path: Path = LEDGER) -> int:

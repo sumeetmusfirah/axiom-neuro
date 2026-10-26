@@ -36,6 +36,7 @@ jobs:
           mkdir -p paper/figures && cp site/figures/*.pdf paper/figures/ 2>/dev/null || true
           cd paper && tectonic --keep-intermediates main.tex && cp main.pdf ../site/axiom-neuro.pdf
           tar czf ../site/arxiv-source.tar.gz main.tex main.bbl refs.bib generated figures
+          zip -r ../site/axiom-neuro-overleaf.zip main.tex refs.bib generated figures
       - run: cp results/RESULTS.md site/ && cp results/summary.json site/
       - uses: actions/upload-pages-artifact@v3
         with:

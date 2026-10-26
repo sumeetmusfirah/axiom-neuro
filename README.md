@@ -6,7 +6,7 @@ Axiom-Neuro is a simulated cognitive-neuroscience lab with known ground truth, f
 [![ci](https://github.com/sumeetmusfirah/axiom-neuro/actions/workflows/ci.yml/badge.svg)](https://github.com/sumeetmusfirah/axiom-neuro/actions/workflows/ci.yml)
 [![experiments](https://github.com/sumeetmusfirah/axiom-neuro/actions/workflows/experiments.yml/badge.svg)](https://github.com/sumeetmusfirah/axiom-neuro/actions/workflows/experiments.yml)
 
-**[Project page, figures and animations](https://sumeetmusfirah.github.io/axiom-neuro/)** · **[Paper (PDF, rebuilt from live results)](https://sumeetmusfirah.github.io/axiom-neuro/axiom-neuro.pdf)** · **[Live results](results/RESULTS.md)** · **[Preregistration](PREREGISTRATION.md)** · **[Architecture](docs/ARCHITECTURE.md)**
+**[Project page, figures and animations](https://sumeetmusfirah.github.io/axiom-neuro/)** · **[Paper (PDF, rebuilt from live results)](https://sumeetmusfirah.github.io/axiom-neuro/axiom-neuro.pdf)** · **[Open the LaTeX in Overleaf](https://www.overleaf.com/docs?snip_uri=https://sumeetmusfirah.github.io/axiom-neuro/axiom-neuro-overleaf.zip&engine=pdflatex)** · **[Live results](results/RESULTS.md)** · **[Preregistration](PREREGISTRATION.md)** · **[Architecture](docs/ARCHITECTURE.md)**
 
 ## Leaderboard
 
@@ -55,6 +55,10 @@ My [previous study](https://github.com/Project-Aletheia-org/aletheia-pressure-ev
 ![traps](https://sumeetmusfirah.github.io/axiom-neuro/figures/fig_trap_mechanics.png)
 
 *Computed from the simulator. Grey: the effect the pilot suggests. Blue: what a careful experiment recovers. The effect vanishes on each trap task and survives on its held-out mirror.*
+
+## The paper
+
+The LaTeX source is in [`paper/`](paper/): `main.tex`, `refs.bib`, and tables and figures generated from the results ledger. Every push rebuilds the PDF, an arXiv tarball and an Overleaf zip. [Open in Overleaf](https://www.overleaf.com/docs?snip_uri=https://sumeetmusfirah.github.io/axiom-neuro/axiom-neuro-overleaf.zip&engine=pdflatex) imports the current version as a new project, figures included.
 
 ## Quick start
 

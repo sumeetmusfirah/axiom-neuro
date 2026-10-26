@@ -10,6 +10,20 @@
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{authblk}
 \usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc}
+\definecolor{axclay}{HTML}{B4532F}
+\definecolor{axolive}{HTML}{556640}
+\definecolor{axpaper}{HTML}{F5F2EA}
+\definecolor{axink}{HTML}{3D3D3A}
+\tikzset{
+  ax/.style={draw=axink!60,rounded corners=2pt,fill=axpaper,align=center,font=\footnotesize,inner sep=5pt,minimum height=9mm},
+  hid/.style={ax,draw=axclay,fill=axclay!8},
+  arr/.style={-{Stealth[length=2.2mm]},draw=axink!80,line width=0.6pt},
+  var/.style={circle,draw=axink!70,fill=axpaper,minimum size=8mm,inner sep=0pt,font=\small},
+  edge/.style={-{Stealth[length=2mm]},line width=0.7pt,draw=axolive},
+  trap/.style={-{Stealth[length=2mm]},line width=0.7pt,draw=axclay,dashed},
+}
 \definecolor{linkblue}{HTML}{2A78D6}
 \usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
 \setlist{itemsep=2pt,topsep=4pt}
@@ -67,6 +81,35 @@ We take the opposite approach: build a world where the truth is known, so that s
   Gates in code block language-model runs until the fit validates, the reference agents order correctly and the task set is frozen; an adaptive stopping rule decides how many replications each cell needs. Everything runs on free GitHub-hosted runners with local open-weight models.
 \end{enumerate}
 
+
+\begin{figure}[t]\centering
+\begin{tikzpicture}[node distance=5mm and 7mm]
+  \node[hid] (truth) {\textbf{Hidden mechanism}\\[1pt]which of 6 causal\\edges exist};
+  \node[ax,right=of truth] (pilot) {\textbf{Pilot data}\\[1pt]sometimes with a\\planted confound};
+  \node[ax,right=of pilot] (design) {\textbf{Design}\\[1pt]factors, order, $n$,\\EEG / ICA};
+  \node[ax,right=of design] (run) {\textbf{Run}\\[1pt]simulated or real\\ERP CORE participants};
+  \node[ax,below=8mm of run] (analyse) {\textbf{Analyse}\\[1pt]regressions, order\\and artifact checks};
+  \node[ax,left=of analyse] (claim) {\textbf{Claims}\\[1pt]$p(\text{edge})$ for\\every edge};
+  \node[hid,left=of claim] (score) {\textbf{Brier score}\\[1pt]vs.\ hidden truth\\(no LLM judge)};
+  \draw[arr] (truth) -- (pilot);
+  \draw[arr] (pilot) -- (design);
+  \draw[arr] (design) -- (run);
+  \draw[arr] (run) -- (analyse);
+  \draw[arr] (analyse.north west) to[bend left=18] node[font=\scriptsize,fill=white,inner sep=1pt]{repeat while budget lasts} (design.south east);
+  \draw[arr] (analyse) -- (claim);
+  \draw[arr] (claim) -- (score);
+  \draw[arr,draw=axclay,dashed] (truth) -- (score);
+  \begin{scope}[on background layer]
+    \node[draw=axolive,dashed,rounded corners=4pt,fit=(design)(run)(analyse),inner sep=4pt,
+      label={[font=\scriptsize\color{axolive}]above:agent, 30 participant-hours}] {};
+  \end{scope}
+  \node[ax,below=8mm of claim,font=\scriptsize,minimum height=7mm] (ideal) {\textbf{Ideal analyst} re-analyses the agent's own data:\ \ claims $-$ ideal $=$ \emph{analysis error};\ \ ideal $-$ oracle $=$ \emph{design error}};
+  \draw[arr,draw=axolive] (analyse.south) |- (ideal.east);
+\end{tikzpicture}
+\caption{An Axiom episode. The agent sees only the pilot data and the tools; the mechanism stays hidden until scoring. Re-analysing the agent's own data with an ideal analyst splits every failure into a design part and an analysis part.}
+\label{fig:overview}
+\end{figure}
+
 \section{Related work}
 Simulated discovery with hidden ground truth is an active area.
 BoxingGym \citep{gandhi2025boxinggym} offers ten generic environments scored by expected information gain and is the closest framework to ours.
@@ -82,6 +125,35 @@ Six candidate causal edges among load $L$, stimulation $S$, practice $P$, perfor
 $L\!\to\!Y$, $S\!\to\!Y$ (a main effect), $S{\times}L\!\to\!Y$ (an interaction), $P\!\to\!Y$, $L\!\to\!T$ (a genuine neural effect) and $L\!\to\!B$.
 Six task types (four training, two held out) fix which edges exist; effect magnitudes are sampled per instance, and practice is present at random except where a trap requires it.
 Practice follows a saturating learning curve, so a linear time covariate cannot remove an order confound; only counterbalancing or a between-subjects design can.
+
+
+\begin{figure}[t]\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \node[var] (L) at (0,1.4) {$L$};
+  \node[var] (S) at (0,0) {$S$};
+  \node[var] (P) at (0,-1.4) {$P$};
+  \node[var,fill=axolive!12] (Y) at (3.4,0) {$Y$};
+  \node[var] (T) at (3.4,2.2) {$T$};
+  \node[var] (B) at (1.7,2.9) {$B$};
+  \node[font=\scriptsize,left=1mm of L,align=right] {load};
+  \node[font=\scriptsize,left=1mm of S,align=right] {tES};
+  \node[font=\scriptsize,left=1mm of P,align=right] {practice};
+  \node[font=\scriptsize,right=1mm of Y,align=left] {performance\\(RT, accuracy)};
+  \node[font=\scriptsize,right=1mm of T,align=left] {frontal theta};
+  \node[font=\scriptsize,above=0.5mm of B] {blinks};
+  \draw[edge] (L) -- (Y);
+  \draw[edge] (S) -- (Y);
+  \draw[edge] (P) to[bend right=12] (Y);
+  \draw[edge] (L) -- (T);
+  \draw[edge] (L) -- (B);
+  \coordinate (int) at ($(S)!0.5!(Y)+(0,0.55)$);
+  \draw[edge] ($(L)!0.35!(S)$) to[out=0,in=180] (int) node[font=\scriptsize,above=1pt]{$S{\times}L$} -- ($(Y)+(-0.42,0.2)$);
+  \draw[trap] (B) -- node[font=\scriptsize,above right=-1pt,text=axclay]{contaminates} (T);
+  \draw[trap] (P) to[bend left=35] node[font=\scriptsize,left,text=axclay,align=right]{active block\\always second} (S);
+\end{tikzpicture}
+\caption{The hypothesis family. Solid arrows are the six candidate edges; each task sets which ones exist. Dashed arrows are the two planted traps: practice tied to stimulation order, and blinks leaking into frontal theta. Each trap has a held-out mirror task with the same pilot data and the opposite truth.}
+\label{fig:graph}
+\end{figure}
 
 \paragraph{Actions and budget.}
 An agent may design an experiment (factors, fixed levels, within or between subjects, fixed or counterbalanced order, sample size, trials per cell, EEG and ICA), describe data, fit cluster-robust regressions, check order confounds, check artifacts, and submit a claim and confidence for every edge.

@@ -31,11 +31,20 @@ def status(rows: list[dict], max_errors: int) -> tuple[set, Counter]:
 
 
 def ok_rows(rows: list[dict]) -> list[dict]:
+    """One scored row per item: the first attempt to complete. Later duplicates (re-runs of an
+    item that had already finished) never replace it; they are used only by `duplicate_pairs`."""
     seen = {}
-    for r in rows:
-        if r["status"] == "ok":
-            seen[r["key"]] = r
+    for r in sorted((r for r in rows if r["status"] == "ok"), key=lambda r: r.get("finished_at", "")):
+        seen.setdefault(r["key"], r)
     return list(seen.values())
+
+
+def duplicate_pairs(rows: list[dict]) -> list[tuple[dict, dict]]:
+    """(first, second) completed attempts of the same item: same task, agent, model, track, labels, seed."""
+    by = {}
+    for r in sorted((r for r in rows if r["status"] == "ok"), key=lambda r: r.get("finished_at", "")):
+        by.setdefault(r["key"], []).append(r)
+    return [(v[0], v[1]) for v in by.values() if len(v) > 1]
 
 
 def primary(rows: list[dict]) -> list[dict]:

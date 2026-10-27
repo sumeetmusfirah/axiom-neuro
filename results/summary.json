@@ -15,9 +15,9 @@
       "passed": true,
       "metric": "brier (lower is better)",
       "means": {
-        "oracle": 0.0408,
         "random": 0.1202,
-        "scripted": 0.0499
+        "scripted": 0.0499,
+        "oracle": 0.0408
       }
     }
   },
@@ -51,18 +51,18 @@
       "exact": 0.0,
       "exact_lo": 0.0,
       "exact_hi": 0.0,
-      "edge_acc": 0.5666666666666667,
-      "brier": 0.2804479166666667,
-      "brier_lo": 0.26113281250000003,
-      "brier_hi": 0.30103828124999993,
-      "confident_wrong": 0.45,
-      "trap_rate": 0.4,
+      "edge_acc": 0.5708333333333333,
+      "brier": 0.27179166666666665,
+      "brier_lo": 0.2520197916666667,
+      "brier_hi": 0.2931481770833333,
+      "confident_wrong": 0.35,
+      "trap_rate": 0.35,
       "confound_handled": null,
       "ideal_on_own_data": 0.0,
       "exact_train": 0.0,
       "exact_heldout": NaN,
       "parse_failures": 0.0,
-      "submit_rate": 0.95
+      "submit_rate": 0.925
     },
     "gemma3:4b|semisynthetic|abstract": {
       "agent": "gemma3:4b",
@@ -72,14 +72,14 @@
       "exact": 0.0,
       "exact_lo": 0.0,
       "exact_hi": 0.0,
-      "edge_acc": 0.6666666666666666,
-      "brier": 0.2550416666666667,
-      "brier_lo": 0.224409375,
-      "brier_hi": 0.2861677083333333,
-      "confident_wrong": 0.9,
-      "trap_rate": 0.5,
+      "edge_acc": 0.6,
+      "brier": 0.30204166666666665,
+      "brier_lo": 0.22432708333333332,
+      "brier_hi": 0.3831187499999998,
+      "confident_wrong": 1.2,
+      "trap_rate": 0.4,
       "confound_handled": 1.0,
-      "ideal_on_own_data": 0.8,
+      "ideal_on_own_data": 0.7,
       "exact_train": 0.0,
       "exact_heldout": NaN,
       "parse_failures": 0.0,
@@ -156,18 +156,18 @@
       "exact": 0.0,
       "exact_lo": 0.0,
       "exact_hi": 0.0,
-      "edge_acc": 0.5537634408602151,
-      "brier": 0.3048655913978495,
-      "brier_lo": 0.27990524193548383,
-      "brier_hi": 0.33069186827956987,
-      "confident_wrong": 0.7096774193548387,
-      "trap_rate": 0.16129032258064516,
+      "edge_acc": 0.532258064516129,
+      "brier": 0.30831129032258064,
+      "brier_lo": 0.2722792876344086,
+      "brier_hi": 0.35010133064516136,
+      "confident_wrong": 0.7419354838709677,
+      "trap_rate": 0.2903225806451613,
       "confound_handled": null,
       "ideal_on_own_data": 0.0,
       "exact_train": 0.0,
       "exact_heldout": NaN,
       "parse_failures": 0.0,
-      "submit_rate": 0.8387096774193549
+      "submit_rate": 0.8709677419354839
     },
     "oracle|semisynthetic|named": {
       "agent": "oracle",
@@ -198,7 +198,7 @@
       "exact": 0.8222222222222222,
       "exact_lo": 0.7666666666666665,
       "exact_hi": 0.8777777777777777,
-      "edge_acc": 0.9657407407407408,
+      "edge_acc": 0.9657407407407407,
       "brier": 0.04082614594444445,
       "brier_lo": 0.03557323291851852,
       "brier_hi": 0.046648480070138894,
@@ -261,18 +261,18 @@
       "exact": 0.0,
       "exact_lo": 0.0,
       "exact_hi": 0.0,
-      "edge_acc": 0.6095238095238096,
-      "brier": 0.24225,
-      "brier_lo": 0.23417767857142854,
-      "brier_hi": 0.249,
-      "confident_wrong": 0.0,
-      "trap_rate": 0.0,
+      "edge_acc": 0.5761904761904763,
+      "brier": 0.2558933333333333,
+      "brier_lo": 0.2478330357142857,
+      "brier_hi": 0.2644533095238095,
+      "confident_wrong": 0.14285714285714285,
+      "trap_rate": 0.14285714285714285,
       "confound_handled": null,
       "ideal_on_own_data": 0.0,
       "exact_train": 0.0,
       "exact_heldout": NaN,
       "parse_failures": 4.057142857142857,
-      "submit_rate": 0.11428571428571428
+      "submit_rate": 0.2
     },
     "qwen3:4b|semisynthetic|abstract": {
       "agent": "qwen3:4b",
@@ -322,12 +322,12 @@
       "labels": "named",
       "n": 180,
       "exact": 0.5666666666666667,
-      "exact_lo": 0.4777777777777778,
-      "exact_hi": 0.6499999999999999,
-      "edge_acc": 0.9055555555555554,
+      "exact_lo": 0.48333333333333334,
+      "exact_hi": 0.65,
+      "edge_acc": 0.9055555555555556,
       "brier": 0.09845970565740741,
-      "brier_lo": 0.08699191416689815,
-      "brier_hi": 0.11058400805439814,
+      "brier_lo": 0.08625508611828704,
+      "brier_hi": 0.11058506787384258,
       "confident_wrong": 0.14444444444444443,
       "trap_rate": 0.08333333333333333,
       "confound_handled": 0.6916666666666667,
@@ -387,7 +387,7 @@
       "exact": 0.7555555555555556,
       "exact_lo": 0.6944444444444444,
       "exact_hi": 0.8111111111111112,
-      "edge_acc": 0.9574074074074075,
+      "edge_acc": 0.9574074074074073,
       "brier": 0.04877503950000001,
       "brier_lo": 0.04442696080578704,
       "brier_hi": 0.053092204579861114,
@@ -452,17 +452,17 @@
     {
       "id": "B1",
       "status": "evaluated",
-      "text": "llama3.2:3b: Brier abstract - named = +0.014 over 40 tasks, Holm p = 0.326; qwen3:4b: Brier abstract - named = +0.015 over 25 tasks, Holm p = 0.0269; gemma3:4b: Brier abstract - named = +0.016 over 40 tasks, Holm p = 0.326"
+      "text": "llama3.2:3b: Brier abstract - named = +0.014 over 40 tasks, Holm p = 0.326; qwen3:4b: Brier abstract - named = -0.000 over 25 tasks, Holm p = 0.433; gemma3:4b: Brier abstract - named = +0.024 over 40 tasks, Holm p = 0.16"
     },
     {
       "id": "B2",
       "status": "evaluated",
-      "text": "llama3.2:3b: Brier model - reference = +0.004 [-0.027, +0.034]; qwen3:4b: Brier model - reference = -0.025 [-0.053, +0.000]; gemma3:4b: Brier model - reference = +0.020 [-0.010, +0.048]; mistral:7b: Brier model - reference = +0.023 [-0.014, +0.060]; qwen3:14b: Brier model - reference = +0.010 [-0.019, +0.039]"
+      "text": "llama3.2:3b: Brier model - reference = +0.004 [-0.027, +0.034]; qwen3:4b: Brier model - reference = -0.025 [-0.053, +0.000]; gemma3:4b: Brier model - reference = +0.020 [-0.010, +0.048]; mistral:7b: Brier model - reference = +0.026 [-0.022, +0.077]; qwen3:14b: Brier model - reference = +0.010 [-0.019, +0.039]"
     },
     {
       "id": "B3",
       "status": "evaluated",
-      "text": "llama3.2:3b: claims true 0.23 / reversed 0.11 / indirect 0.16 / confounded 0.12; qwen3:4b: claims true 0.08 / reversed 0.00 / indirect 0.00 / confounded 0.00; gemma3:4b: claims true 0.24 / reversed 0.17 / indirect 0.23 / confounded 0.17"
+      "text": "llama3.2:3b: claims true 0.23 / reversed 0.11 / indirect 0.16 / confounded 0.12; qwen3:4b: claims true 0.08 / reversed 0.07 / indirect 0.03 / confounded 0.07; gemma3:4b: claims true 0.31 / reversed 0.22 / indirect 0.20 / confounded 0.29"
     }
   ],
   "replication": {
@@ -470,6 +470,43 @@
     "table": [],
     "kendall_tau": null,
     "n_agents": 0
+  },
+  "reproducibility": {
+    "pairs": 323,
+    "per_agent": {
+      "gemma3:4b": {
+        "pairs": 90,
+        "identical_claims": 0.5333333333333333,
+        "mean_abs_brier_diff": 0.03756018518518518,
+        "max_abs_brier_diff": 0.24791666666666662
+      },
+      "llama3.2:3b": {
+        "pairs": 126,
+        "identical_claims": 1.0,
+        "mean_abs_brier_diff": 0.0,
+        "max_abs_brier_diff": 0.0
+      },
+      "mistral:7b": {
+        "pairs": 31,
+        "identical_claims": 0.16129032258064516,
+        "mean_abs_brier_diff": 0.082397311827957,
+        "max_abs_brier_diff": 0.2988166666666668
+      },
+      "qwen3:14b": {
+        "pairs": 14,
+        "identical_claims": 1.0,
+        "mean_abs_brier_diff": 0.0,
+        "max_abs_brier_diff": 0.0
+      },
+      "qwen3:4b": {
+        "pairs": 62,
+        "identical_claims": 0.8225806451612904,
+        "mean_abs_brier_diff": 0.010161559139784946,
+        "max_abs_brier_diff": 0.10874999999999996
+      }
+    },
+    "identical_claims": 0.7554179566563467,
+    "mean_abs_brier_diff": 0.020324303405572754
   },
   "release_tag": null,
   "models": [

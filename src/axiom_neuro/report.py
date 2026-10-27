@@ -226,6 +226,20 @@ def replication(cfg: dict, rows: list[dict], summ: dict) -> dict:
     return {"waves": waves, "table": table, "kendall_tau": tau, "n_agents": len(both)}
 
 
+def reproducibility(rows: list[dict]) -> dict:
+    """Same item, same seed, run twice: how often does the episode come out the same?"""
+    per = defaultdict(list)
+    for a, b in L.duplicate_pairs(rows):
+        per[_cell_name(a)].append((a["claims"] == b["claims"], abs(a["scores"]["brier"] - b["scores"]["brier"])))
+    table = {m: {"pairs": len(v), "identical_claims": float(np.mean([s for s, _ in v])),
+                 "mean_abs_brier_diff": float(np.mean([d for _, d in v])),
+                 "max_abs_brier_diff": float(np.max([d for _, d in v]))} for m, v in sorted(per.items())}
+    allv = [x for v in per.values() for x in v]
+    return {"pairs": len(allv), "per_agent": table,
+            "identical_claims": float(np.mean([s for s, _ in allv])) if allv else None,
+            "mean_abs_brier_diff": float(np.mean([d for _, d in allv])) if allv else None}
+
+
 def leaderboard(cfg: dict, summ: dict) -> str:
     added = {m["name"] for m in cfg["llm"]["models"] if m.get("added")}
     sel = sorted((v for v in summ.values() if v["track"] == "synthetic" and v["labels"] == "named"
@@ -303,6 +317,18 @@ def build(rows: list[dict] | None = None) -> dict:
     md += ["", "## Preregistered hypotheses (see PREREGISTRATION.md)", ""]
     for h in hyp:
         md.append(f"- **{h['id']}** ({h['status']}): {h.get('text') or 'waiting for data'}")
+    repro = reproducibility(rows)
+    md += ["", "## Reproducibility of seeded episodes", ""]
+    if repro["pairs"]:
+        md += [f"{repro['pairs']} items were run twice with the same seed (an automation fault re-ran finished work; "
+               "the first completed attempt is the scored one). Local inference on CPU is not bit-deterministic, "
+               f"so the pairs measure run-to-run noise: {repro['identical_claims']:.0%} gave identical claims, "
+               f"mean |ΔBrier| = {repro['mean_abs_brier_diff']:.3f}.", "",
+               "| Agent | Pairs | Identical claims | Mean abs. Brier difference | Max |", "| --- | --- | --- | --- | --- |"]
+        for m, v in repro["per_agent"].items():
+            md.append(f"| {m} | {v['pairs']} | {v['identical_claims']:.0%} | {v['mean_abs_brier_diff']:.3f} | {v['max_abs_brier_diff']:.3f} |")
+    else:
+        md.append("No item has been run twice yet.")
     md += ["", "## Replication waves (exploratory, R1)", ""]
     if rep["table"]:
         ws = rep["waves"]
@@ -325,7 +351,7 @@ def build(rows: list[dict] | None = None) -> dict:
     release = f"results-{now[:10]}" if n_ok and not plan["n_pending_total"] and not plan["setup"] else None
     payload = {"generated": now, "episodes_ok": n_ok, "failed_attempts": n_err,
                "queued": plan["n_pending_total"], "gates": plan["gates"], "cells": summ, "hypotheses": hyp,
-               "replication": rep, "release_tag": release,
+               "replication": rep, "reproducibility": repro, "release_tag": release,
                "models": [{k: m.get(k) for k in ("name", "params_b", "added", "digest")} for m in cfg["llm"]["models"]],
                "waves": W.index()}
     SUMMARY.write_text(json.dumps(payload, indent=2, default=str))

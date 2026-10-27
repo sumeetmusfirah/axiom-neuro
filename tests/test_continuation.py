@@ -78,3 +78,10 @@ def test_plan_runs_the_headline_cell_first():
     order = sorted(items, key=_priority)
     assert (order[0]["track"], order[0]["labels"]) == ("synthetic", "named") and not order[0].get("wave")
     assert order[-1].get("wave") == 1
+
+
+def test_first_completed_attempt_counts_and_duplicates_are_paired():
+    a = {"key": "k", "status": "ok", "finished_at": "2026-10-26T01", "v": "first"}
+    b = {"key": "k", "status": "ok", "finished_at": "2026-10-26T02", "v": "second"}
+    assert [r["v"] for r in L.ok_rows([b, a])] == ["first"]
+    assert [(x["v"], y["v"]) for x, y in L.duplicate_pairs([b, a])] == [("first", "second")]

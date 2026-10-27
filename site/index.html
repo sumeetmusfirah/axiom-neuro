@@ -144,6 +144,11 @@
   <figure data-fig="fig_scale"><img src="figures/fig_scale.png" alt="Brier against model size."><figcaption>Does judgement improve with scale?</figcaption></figure>
   <div class="table-wrap" id="table" hidden></div>
 
+  <h2>Same seed, same answer?</h2>
+  <p>Some items were run twice with the same seed, after an automation fault re-ran finished work. Only the first attempt is scored. The second shows how repeatable an episode is when the model runs locally on a CPU, where inference is not bit-for-bit deterministic.</p>
+  <p id="repro" class="pending">No item has been run twice yet.</p>
+  <div class="table-wrap" id="reprotable" hidden></div>
+
   <h2>Replication on fresh tasks</h2>
   <p>A frozen task set can leak. Once it is published, later models may have seen it. So when the preregistered queue empties, the engine freezes a new wave of never-seen task instances every four weeks. Their seeds were fixed in advance. Every agent runs each wave once. If the rankings hold on fresh tasks, the benchmark measures judgement, not memory.</p>
   <p id="waves" class="pending">No wave has run yet. The first one is frozen once the preregistered queue is empty.</p>
@@ -231,6 +236,16 @@
     document.getElementById("st-waves").textContent = nWaves ? `${nWaves} wave${nWaves > 1 ? "s" : ""} frozen` : "starts when the queue empties";
     document.getElementById("st-models").textContent = models.length ? `${models.length} models · ${added.size} added since registration` : "–";
     document.getElementById("st-release").textContent = s.release_tag ? `due: ${s.release_tag}` : "next one when the queue drains";
+    const rp = s.reproducibility || {};
+    if (rp.pairs) {
+      document.getElementById("repro").textContent = `${rp.pairs} repeated items: ${Math.round(100 * rp.identical_claims)}% gave identical claims; mean change in Brier ${fmt(rp.mean_abs_brier_diff)}.`;
+      const t = document.getElementById("reprotable");
+      t.hidden = false;
+      t.innerHTML = `<table><thead><tr><th>Agent</th><th class="num">Pairs</th><th class="num">Identical claims</th><th class="num">Mean |ΔBrier|</th><th class="num">Max</th></tr></thead><tbody>` +
+        Object.entries(rp.per_agent).sort((a, b) => b[1].identical_claims - a[1].identical_claims).map(([m, v]) =>
+          `<tr><td>${name(m)}</td><td class="num">${v.pairs}</td><td class="num">${Math.round(100 * v.identical_claims)}%</td><td class="num">${fmt(v.mean_abs_brier_diff)}</td><td class="num">${fmt(v.max_abs_brier_diff)}</td></tr>`).join("") +
+        `</tbody></table>`;
+    }
     if ((rep.table || []).length) {
       const ws = rep.waves;
       document.getElementById("waves").textContent = rep.kendall_tau === null ? `${ws.length} wave(s) scored so far. Synthetic track, named labels, edge Brier.`

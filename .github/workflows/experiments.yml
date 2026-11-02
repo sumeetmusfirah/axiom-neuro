@@ -142,7 +142,7 @@ jobs:
           for i in 1 2 3 4 5; do
             git fetch -q origin main && git reset -q --hard origin/main
             .venv/bin/axiom collect && .venv/bin/axiom report && .venv/bin/axiom study-report
-            git add results/ README.md ':!results/incoming'
+            git add results/ README.md  # results/incoming is gitignored; naming it here makes git add exit 1
             git diff --cached --quiet && { echo "no new results"; exit 0; }
             n=$(git diff --cached --numstat results/ledger.jsonl | awk '{print $1}')
             git commit -q -m "results: +${n:-0} ledger rows (run ${{ github.run_id }})"

@@ -1,8 +1,8 @@
 {
-  "generated": "2026-10-27T02:57:44.769088+00:00",
-  "episodes_ok": 1995,
+  "generated": "2026-11-02T21:01:30.821731+00:00",
+  "episodes_ok": 2346,
   "failed_attempts": 12,
-  "queued": 1645,
+  "queued": 1414,
   "gates": {
     "fit_validated": {
       "passed": true,
@@ -106,6 +106,27 @@
       "parse_failures": 0.0,
       "submit_rate": 1.0
     },
+    "gemma3:4b|synthetic|named": {
+      "agent": "gemma3:4b",
+      "track": "synthetic",
+      "labels": "named",
+      "n": 50,
+      "exact": 0.14,
+      "exact_lo": 0.06,
+      "exact_hi": 0.24,
+      "edge_acc": 0.7066666666666667,
+      "brier": 0.2522796666666667,
+      "brier_lo": 0.2290683416666667,
+      "brier_hi": 0.27803256666666665,
+      "confident_wrong": 0.58,
+      "trap_rate": 0.35,
+      "confound_handled": 0.8666666666666667,
+      "ideal_on_own_data": 0.84,
+      "exact_train": 0.125,
+      "exact_heldout": 0.2,
+      "parse_failures": 0.0,
+      "submit_rate": 0.96
+    },
     "llama3.2:3b|sachs|abstract": {
       "agent": "llama3.2:3b",
       "track": "sachs",
@@ -173,43 +194,64 @@
       "agent": "llama3.2:3b",
       "track": "semisynthetic",
       "labels": "named",
-      "n": 60,
-      "exact": 0.03333333333333333,
+      "n": 78,
+      "exact": 0.025,
       "exact_lo": 0.0,
-      "exact_hi": 0.08333333333333333,
-      "edge_acc": 0.5472222222222222,
-      "brier": 0.32440472222222216,
-      "brier_lo": 0.2996827361111111,
-      "brier_hi": 0.35182723611111105,
-      "confident_wrong": 1.1,
-      "trap_rate": 0.45,
-      "confound_handled": 0.775,
-      "ideal_on_own_data": 0.7166666666666667,
-      "exact_train": 0.05,
+      "exact_hi": 0.06666666666666667,
+      "edge_acc": 0.5534188034188035,
+      "brier": 0.3194266666666667,
+      "brier_lo": 0.2971625972222222,
+      "brier_hi": 0.3450950208333333,
+      "confident_wrong": 0.9615384615384616,
+      "trap_rate": 0.4,
+      "confound_handled": 0.8,
+      "ideal_on_own_data": 0.7307692307692307,
+      "exact_train": 0.034482758620689655,
       "exact_heldout": 0.0,
       "parse_failures": 0.0,
-      "submit_rate": 0.95
+      "submit_rate": 0.9102564102564102
     },
     "llama3.2:3b|synthetic|abstract": {
       "agent": "llama3.2:3b",
       "track": "synthetic",
       "labels": "abstract",
-      "n": 52,
-      "exact": 0.057692307692307696,
+      "n": 60,
+      "exact": 0.05,
       "exact_lo": 0.0,
-      "exact_hi": 0.1346153846153846,
-      "edge_acc": 0.592948717948718,
-      "brier": 0.2982929082371795,
-      "brier_lo": 0.27396009615384614,
-      "brier_hi": 0.3242136774679487,
-      "confident_wrong": 0.8461538461538461,
+      "exact_hi": 0.11666666666666667,
+      "edge_acc": 0.6000000000000001,
+      "brier": 0.2956955204722222,
+      "brier_lo": 0.27399949824583336,
+      "brier_hi": 0.3190843482541667,
+      "confident_wrong": 0.8666666666666667,
       "trap_rate": 0.2,
-      "confound_handled": 0.8125,
-      "ideal_on_own_data": 0.6153846153846154,
+      "confound_handled": 0.825,
+      "ideal_on_own_data": 0.6,
       "exact_train": 0.075,
       "exact_heldout": 0.0,
       "parse_failures": 0.0,
-      "submit_rate": 0.9423076923076923
+      "submit_rate": 0.95
+    },
+    "llama3.2:3b|synthetic|named": {
+      "agent": "llama3.2:3b",
+      "track": "synthetic",
+      "labels": "named",
+      "n": 60,
+      "exact": 0.016666666666666666,
+      "exact_lo": 0.0,
+      "exact_hi": 0.05,
+      "edge_acc": 0.6083333333333333,
+      "brier": 0.29241000044444454,
+      "brier_lo": 0.2716136875222222,
+      "brier_hi": 0.31419052127777775,
+      "confident_wrong": 0.8,
+      "trap_rate": 0.25,
+      "confound_handled": 0.675,
+      "ideal_on_own_data": 0.5833333333333334,
+      "exact_train": 0.025,
+      "exact_heldout": 0.0,
+      "parse_failures": 0.0,
+      "submit_rate": 0.8833333333333333
     },
     "mistral:7b|sachs|abstract": {
       "agent": "mistral:7b",
@@ -400,6 +442,27 @@
       "parse_failures": 1.6923076923076923,
       "submit_rate": 0.9230769230769231
     },
+    "qwen3:4b|synthetic|named": {
+      "agent": "qwen3:4b",
+      "track": "synthetic",
+      "labels": "named",
+      "n": 50,
+      "exact": 0.32,
+      "exact_lo": 0.2,
+      "exact_hi": 0.46,
+      "edge_acc": 0.83,
+      "brier": 0.15740033333333334,
+      "brier_lo": 0.12892339166666666,
+      "brier_hi": 0.18605570833333335,
+      "confident_wrong": 0.4,
+      "trap_rate": 0.3,
+      "confound_handled": 0.8333333333333334,
+      "ideal_on_own_data": 0.76,
+      "exact_train": 0.325,
+      "exact_heldout": 0.3,
+      "parse_failures": 1.46,
+      "submit_rate": 0.8
+    },
     "random|sachs|named": {
       "agent": "random",
       "track": "sachs",
@@ -530,29 +593,33 @@
   "hypotheses": [
     {
       "id": "H1",
-      "status": "pending"
+      "status": "evaluated",
+      "text": "3/3 models' Brier CI lies wholly above (worse than) the scripted baseline (0.050)."
     },
     {
       "id": "H2",
-      "status": "pending"
+      "status": "evaluated",
+      "text": "llama3.2:3b: trap 0.25 vs mirror denial 0.70, Holm p = 1; qwen3:4b: trap 0.30 vs mirror denial 0.10, Holm p = 0.685; gemma3:4b: trap 0.35 vs mirror denial 0.60, Holm p = 1"
     },
     {
       "id": "H3",
-      "status": "pending",
-      "text": null
+      "status": "evaluated",
+      "text": "llama3.2:3b: own claims 0.02 vs ideal analysis of its data 0.58; qwen3:4b: own claims 0.32 vs ideal analysis of its data 0.76; gemma3:4b: own claims 0.14 vs ideal analysis of its data 0.84"
     },
     {
       "id": "H4",
-      "status": "pending"
+      "status": "evaluated",
+      "text": "Spearman rho(size, Brier) = -0.50 (negative = bigger is better; n = 3, p = 0.667)"
     },
     {
       "id": "H5",
-      "status": "pending"
+      "status": "evaluated",
+      "text": "Kendall tau synthetic vs semi-synthetic agent ranking = 1.00 (n = 6)"
     },
     {
       "id": "H6",
-      "status": "pending",
-      "text": null
+      "status": "evaluated",
+      "text": "llama3.2:3b: Brier abstract - named = +0.003 (positive = names help)"
     },
     {
       "id": "B1",
@@ -577,41 +644,41 @@
     "n_agents": 0
   },
   "reproducibility": {
-    "pairs": 335,
+    "pairs": 1021,
     "per_agent": {
       "gemma3:4b": {
-        "pairs": 90,
-        "identical_claims": 0.5333333333333333,
-        "mean_abs_brier_diff": 0.03756018518518518,
-        "max_abs_brier_diff": 0.24791666666666662
+        "pairs": 270,
+        "identical_claims": 0.5259259259259259,
+        "mean_abs_brier_diff": 0.041182159876543216,
+        "max_abs_brier_diff": 0.3691666666666667
       },
       "llama3.2:3b": {
-        "pairs": 126,
+        "pairs": 378,
         "identical_claims": 1.0,
         "mean_abs_brier_diff": 0.0,
         "max_abs_brier_diff": 0.0
       },
       "mistral:7b": {
-        "pairs": 31,
-        "identical_claims": 0.16129032258064516,
-        "mean_abs_brier_diff": 0.082397311827957,
-        "max_abs_brier_diff": 0.2988166666666668
+        "pairs": 90,
+        "identical_claims": 0.43333333333333335,
+        "mean_abs_brier_diff": 0.059756661111111116,
+        "max_abs_brier_diff": 0.40666666666666673
       },
       "qwen3:14b": {
-        "pairs": 14,
-        "identical_claims": 1.0,
-        "mean_abs_brier_diff": 0.0,
-        "max_abs_brier_diff": 0.0
+        "pairs": 42,
+        "identical_claims": 0.42857142857142855,
+        "mean_abs_brier_diff": 0.03630952380952381,
+        "max_abs_brier_diff": 0.1916666666666666
       },
       "qwen3:4b": {
-        "pairs": 74,
-        "identical_claims": 0.7162162162162162,
-        "mean_abs_brier_diff": 0.019386036036036034,
-        "max_abs_brier_diff": 0.21666666666666665
+        "pairs": 241,
+        "identical_claims": 0.7385892116182573,
+        "mean_abs_brier_diff": 0.028110340248962657,
+        "max_abs_brier_diff": 0.296976
       }
     },
-    "identical_claims": 0.7343283582089553,
-    "mean_abs_brier_diff": 0.021997910447761195
+    "identical_claims": 0.7394711067580804,
+    "mean_abs_brier_diff": 0.02428685079986941
   },
   "release_tag": null,
   "models": [

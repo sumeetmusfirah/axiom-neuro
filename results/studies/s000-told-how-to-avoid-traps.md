@@ -6,16 +6,16 @@
 
 **Change from the main study.** `instruction = 'Two pitfalls matter here. (1) If stimulation was always given in the second block, practice can masquerade as a stimulation effect: run a design with counterbalanced or between-subjects order before claiming S->Y. (2) Blinks inflate frontal theta: enable ICA or run an artifact check before claiming L->T.'`
 
-**Progress.** 165 of 200 episodes — still running.
+**Progress.** 200 of 200 episodes — still running.
 
 Brier is the mean edge Brier score (lower is better). Difference = study minus the main study's episodes for the same model, track, labels and tasks; 95% CI by bootstrap over tasks.
 
 | Model | Track | Labels | n | Study Brier | Main-study Brier | Difference [95% CI] | Verdict | Fell for trap | Analysis error |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| llama3.2:3b | synthetic | named | 40 | 0.276 | 0.287 | -0.011 [-0.048, 0.022] | no clear difference | 0.25 | 0.190 |
-| qwen3:4b | synthetic | named | 40 | 0.146 | 0.160 | -0.004 [-0.054, 0.048] | no clear difference | 0.20 | 0.081 |
-| gemma3:4b | synthetic | named | 40 | 0.241 | 0.257 | -0.011 [-0.053, 0.028] | no clear difference | 0.30 | 0.169 |
-| mistral:7b | synthetic | named | 31 | 0.255 | – | – (no paired baseline yet) | – | 0.15 | 0.183 |
-| qwen3:14b | synthetic | named | 14 | 0.127 | – | – (no paired baseline yet) | – | 0.30 | 0.078 |
+| llama3.2:3b | synthetic | named | 40 | 0.276 | 0.294 | -0.018 [-0.049, 0.012] | no clear difference | 0.25 | 0.190 |
+| qwen3:4b | synthetic | named | 40 | 0.146 | 0.149 | -0.003 [-0.048, 0.042] | no clear difference | 0.20 | 0.081 |
+| gemma3:4b | synthetic | named | 40 | 0.241 | 0.236 | 0.005 [-0.031, 0.040] | no clear difference | 0.30 | 0.169 |
+| mistral:7b | synthetic | named | 40 | 0.258 | 0.243 | 0.012 [-0.029, 0.048] | no clear difference | 0.15 | 0.176 |
+| qwen3:14b | synthetic | named | 40 | 0.120 | – | – (no paired baseline yet) | – | 0.20 | 0.054 |
 
 Exploratory: decided after the preregistration and kept out of every preregistered test.

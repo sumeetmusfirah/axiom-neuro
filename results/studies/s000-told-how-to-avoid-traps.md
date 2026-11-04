@@ -16,6 +16,6 @@ Brier is the mean edge Brier score (lower is better). Difference = study minus t
 | qwen3:4b | synthetic | named | 40 | 0.146 | 0.170 | -0.024 [-0.062, 0.015] | no clear difference | 0.20 | 0.081 |
 | gemma3:4b | synthetic | named | 40 | 0.241 | 0.233 | 0.008 [-0.018, 0.035] | no clear difference | 0.30 | 0.169 |
 | mistral:7b | synthetic | named | 40 | 0.258 | 0.240 | 0.018 [-0.024, 0.059] | no clear difference | 0.15 | 0.176 |
-| qwen3:14b | synthetic | named | 40 | 0.120 | 0.131 | 0.005 [-0.032, 0.038] | no clear difference | 0.20 | 0.054 |
+| qwen3:14b | synthetic | named | 40 | 0.120 | 0.128 | 0.000 [-0.023, 0.021] | no clear difference | 0.20 | 0.054 |
 
 Exploratory: decided after the preregistration and kept out of every preregistered test.

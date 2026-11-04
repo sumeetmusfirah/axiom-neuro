@@ -132,7 +132,7 @@ def run_llm(env, client: ChatClient, seed: int, max_turns: int = 12, instruction
         left = max_turns - turn
         nudge = " This is your LAST turn: you must submit now." if left == 1 else ""
         messages.append({"role": "user", "content":
-                         f"Observation: {json.dumps(obs)}\nRemaining budget: {env.remaining} participant-hours. "
+                         f"Observation: {json.dumps(obs)}\nRemaining budget: {env.remaining} {getattr(env, 'BUDGET_UNIT', 'participant-hours')}. "
                          f"Turns left: {left}.{nudge}"})
     submitted = env.episode.submitted is not None
     if not submitted:

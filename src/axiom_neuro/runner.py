@@ -60,7 +60,7 @@ def _run_llm(env, item, cfg, client):
 
 def _with_budget(task, item):
     b = _study_change(item).get("budget_participant_hours")
-    if b is None or item.get("domain") == "bio":  # bio budgets are in cells, not participant-hours
+    if b is None or item.get("domain", "neuro") != "neuro":  # other labs budget cells or rows, not participant-hours
         return task
     import copy
     t = copy.copy(task)
@@ -114,10 +114,25 @@ def run_bio_item(item: dict, task, cfg: dict, client_factory=None) -> dict:
     return row
 
 
+def run_claim_item(item: dict, task, cfg: dict, client_factory=None) -> dict:
+    from . import claimlab as CL
+
+    def llm(env):
+        client = _llm_client(item, cfg, client_factory)
+        extra = _run_llm(env, item, cfg, client)
+        return {"turns": extra["turns"], "parse_failures": extra["parse_failures"],
+                "submitted": extra["submitted"], "model_digest": _digest(client),
+                "transcript": _save_transcript(item, extra, env.episode.actions)}
+
+    return CL.run_item(CL.LABS[item["domain"]], item, task, llm)
+
+
 def run_item(item: dict, task, params, cfg: dict, client_factory=None) -> dict:
     task = _with_budget(task, item)
     if item.get("domain") == "bio":
         return run_bio_item(item, task, cfg, client_factory)
+    if item.get("domain") in ("health", "ethics"):
+        return run_claim_item(item, task, cfg, client_factory)
     env = LabEnv(task, params, item["track"], item["labels"], run_seed=item["seed"])
     extra = {}
     if item["agent"] == "random":
@@ -162,6 +177,9 @@ def run_shard(plan: dict, shard: int, out_path: Path, budget_min: float, cfg: di
     if any(it.get("domain") == "bio" for s in plan["shards"] for it in s["items"]):
         from .bio.lab import load_bio_tasks
         tasks.update({t.task_id: t for t in load_bio_tasks()})
+    from . import claimlab as CL
+    for name in {it.get("domain") for s in plan["shards"] for it in s["items"]} & set(CL.LABS):
+        tasks.update({t.task_id: t for t in CL.tasks(CL.LABS[name])})
     if any(it.get("wave") for s in plan["shards"] for it in s["items"]):
         from .waves import wave_tasks
         tasks.update({t.task_id: t for ts in wave_tasks().values() for t in ts})
@@ -183,7 +201,7 @@ def run_shard(plan: dict, shard: int, out_path: Path, budget_min: float, cfg: di
             if item.get("study"):
                 base["study"] = item["study"]
             base.update({"domain": item.get("domain", "neuro"), "task_type": t.task_type,
-                         "split": t.split if item.get("domain") == "bio" else TASK_TYPES[t.task_type].split,
+                         "split": t.split if item.get("domain", "neuro") != "neuro" else TASK_TYPES[t.task_type].split,
                          "attempt_id": uuid.uuid4().hex[:12],
                          "params_source": params.source, "manifest_sha": manifest_sha,
                          "git_sha": os.environ.get("GITHUB_SHA", "local")})

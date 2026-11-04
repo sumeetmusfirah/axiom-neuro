@@ -21,6 +21,20 @@ enabled = true
 seed = 20261025
 n_tasks = 40
 
+[labs.health]
+# Axiom-Health (exploratory, registered 2026-11-04 before any episode): real NHANES 2017-18 adults,
+# a planted hypothetical exposure with known confounding and effect. See PREREGISTRATION.md.
+enabled = true
+seed = 20261104
+n_tasks = 20
+
+[labs.ethics]
+# Axiom-Ethics (exploratory, registered 2026-11-04 before any episode): real COMPAS risk scores
+# (ProPublica). Claims' truth fixed from the full data. Raw data fetched at runtime, never committed.
+enabled = true
+seed = 20261104
+n_tasks = 20
+
 [baselines]
 agents = ["random", "scripted", "oracle"]
 seeds = 3
@@ -33,6 +47,9 @@ models = [
   { name = "gemma3:4b",   params_b = 4.3, minutes_per_episode = 7 },
   { name = "mistral:7b",  params_b = 7.2, minutes_per_episode = 10 },
   { name = "qwen3:14b",   params_b = 14.8, minutes_per_episode = 22 },
+  { name = "gemma4:12b", params_b = 12.0, minutes_per_episode = 18, added = "2026-11-04", digest = "6114515d63c1" },
+  { name = "qwen3.5:9b", params_b = 9.0, minutes_per_episode = 14, added = "2026-11-04", digest = "56671c2ab938" },
+  { name = "gemma4:e4b", params_b = 8.0, minutes_per_episode = 12, added = "2026-11-04", digest = "dc35e8d9c606" },
 ]
 max_turns = 12
 temperature = 0.7
@@ -68,6 +85,8 @@ enabled = true
 max_queue_episodes = 600
 max_download_gb = 10.0
 candidates = [
+  { name = "qwen3.5:4b",     params_b = 4.0 },
+  { name = "granite4:3b",    params_b = 3.0 },
   { name = "phi4-mini:3.8b", params_b = 3.8 },
   { name = "llama3.1:8b",    params_b = 8.0 },
   { name = "qwen3:8b",       params_b = 8.2 },

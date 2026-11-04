@@ -20,3 +20,6 @@ site/summary.json
 paper/figures/
 paper/*.toc
 release-notes.md
+
+# ProPublica terms forbid redistributing the raw COMPAS file; it is fetched at runtime
+data/compas_two_years.csv.gz

@@ -29,6 +29,19 @@ def cmd_oracle(a):
     return 0
 
 
+def cmd_lab_setup(a):
+    from . import claimlab as CL
+    cfg = load_config()
+    names = a.names or [m.NAME for m in CL.enabled(cfg) if a.force or not CL.ready(m)]
+    for n in names:
+        m = CL.LABS[n]
+        if CL.ready(m) and not a.force:
+            print(f"{n}: already frozen")
+            continue
+        print(f"{n}: tasks frozen sha256=" + CL.setup(m, cfg))
+    return 0
+
+
 def cmd_bio_setup(a):
     from .bio.data import fetch
     from .bio.lab import BIO_MANIFEST, build_bio_tasks, freeze_bio
@@ -223,6 +236,7 @@ def main(argv=None) -> int:
     s = sub.add_parser("fit-erpcore"); s.add_argument("--participants", type=int, default=40); s.set_defaults(f=cmd_fit)
     s = sub.add_parser("oracle"); s.add_argument("--sims", type=int, default=8); s.set_defaults(f=cmd_oracle)
     s = sub.add_parser("freeze"); s.add_argument("--force", action="store_true"); s.set_defaults(f=cmd_freeze)
+    s = sub.add_parser("lab-setup"); s.add_argument("names", nargs="*"); s.add_argument("--force", action="store_true"); s.set_defaults(f=cmd_lab_setup)
     s = sub.add_parser("bio-setup"); s.add_argument("--force", action="store_true"); s.set_defaults(f=cmd_bio_setup)
     s = sub.add_parser("plan"); s.add_argument("--out", default="plan.json"); s.set_defaults(f=cmd_plan)
     s = sub.add_parser("run")

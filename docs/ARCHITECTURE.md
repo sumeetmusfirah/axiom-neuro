@@ -10,6 +10,7 @@ src/axiom_neuro/
   erpcore/fit.py             download ERP CORE, extract trials/theta/blinks, fit, held-out validation
   analysis.py                cluster-robust OLS, ideal analyst, the agent's analysis tools
   env.py                     the lab: pilot data, budget, actions, episode log
+  claimlab/                  Axiom-Health (NHANES) and Axiom-Ethics (COMPAS): real data, claims with known answers
   agents/baselines.py        random / scripted / simulation-optimal oracle
   agents/llm.py              local LLM via Ollama, schema-constrained JSON actions
   scoring.py                 judge-free scoring against ground truth

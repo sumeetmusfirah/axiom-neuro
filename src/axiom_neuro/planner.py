@@ -35,6 +35,9 @@ def setup_needed(cfg: dict | None = None) -> list[str]:
     steps = []
     if cfg and cfg.get("bio", {}).get("enabled") and not bio_ready():
         steps.append("bio")
+    if cfg:
+        from . import claimlab as CL
+        steps += [f"lab:{m.NAME}" for m in CL.enabled(cfg) if not CL.ready(m)]
     p = load_params()
     if not FITTED_PATH.exists():
         steps.append("fit")
@@ -108,6 +111,17 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
                         items.append({"key": k, "task_id": t.task_id, "agent": agent, "model": "none",
                                       "track": "sachs", "labels": "named", "seed": seed, "est_min": 0.1,
                                       "domain": "bio"})
+    from . import claimlab as CL
+    labs = [(m, CL.tasks(m)) for m in CL.enabled(cfg) if CL.ready(m)]
+    for m, lab_tasks in labs:
+        for seed in range(cfg["baselines"]["seeds"]):
+            for agent in ("random", "scripted"):
+                for t in lab_tasks:
+                    k = L.item_key(t.task_id, agent, "none", m.TRACK, "named", seed)
+                    if k not in done:
+                        items.append({"key": k, "task_id": t.task_id, "agent": agent, "model": "none",
+                                      "track": m.TRACK, "labels": "named", "seed": seed, "est_min": 0.1,
+                                      "domain": m.NAME})
     if not g["baseline_order"]["passed"]:
         return items, g
     studies = S.pending(cfg, done, tasks, bio_tasks if bio_on else [])
@@ -116,7 +130,8 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
 
     sc = cfg["seeds"]
     ok = L.ok_rows(L.primary(rows))
-    cells = [(track, tasks, "neuro") for track in tracks] + ([("sachs", bio_tasks, "bio")] if bio_on else [])
+    cells = [(track, tasks, "neuro") for track in tracks] + ([("sachs", bio_tasks, "bio")] if bio_on else []) \
+        + [(m.TRACK, lab_tasks, m.NAME) for m, lab_tasks in labs]
     for m in cfg["llm"]["models"]:
         for track, track_tasks, domain in cells:
             for lab in labels:
@@ -137,7 +152,7 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
 
 # Execution order only (what gets run is unchanged): author studies first, then the headline cell,
 # so the leaderboard fills before the secondary tracks. Alphabetical order ran "sachs" and "abstract" first.
-TRACK_RANK = {"synthetic": 0, "semisynthetic": 1, "sachs": 2}
+TRACK_RANK = {"synthetic": 0, "semisynthetic": 1, "sachs": 2, "nhanes": 3, "compas": 4}
 LABEL_RANK = {"named": 0, "abstract": 1}
 
 

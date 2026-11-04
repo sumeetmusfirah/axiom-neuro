@@ -67,6 +67,9 @@ jobs:
       - name: Bio lab (fetch Sachs cells, freeze bio tasks)
         if: contains(needs.plan.outputs.setup, 'bio')
         run: .venv/bin/axiom bio-setup
+      - name: Claim labs (fetch data, freeze tasks)
+        if: contains(needs.plan.outputs.setup, 'lab:')
+        run: .venv/bin/axiom lab-setup
       - name: Freeze the next replication wave (fresh, never-seen tasks)
         if: contains(needs.plan.outputs.setup, 'wave')
         run: .venv/bin/axiom freeze-wave

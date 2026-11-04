@@ -298,8 +298,10 @@ def build(rows: list[dict] | None = None) -> dict:
         detail = {kk: vv for kk, vv in v.items() if kk != "passed"}
         md.append(f"| {k} | {'yes' if v['passed'] else 'no'} | `{json.dumps(detail)}` |")
     titles = {"synthetic": "Axiom-Neuro, synthetic track", "semisynthetic": "Axiom-Neuro, semi-synthetic track (real ERP CORE trials)",
-              "sachs": "Axiom-Bio (real single cells, Sachs et al. 2005)"}
-    for track in ("synthetic", "semisynthetic", "sachs"):
+              "sachs": "Axiom-Bio (real single cells, Sachs et al. 2005)",
+              "nhanes": "Axiom-Health (exploratory; real NHANES 2017-18 adults, planted exposure)",
+              "compas": "Axiom-Ethics (exploratory; real COMPAS risk scores, ProPublica)"}
+    for track in ("synthetic", "semisynthetic", "sachs", "nhanes", "compas"):
         sel = {k: v for k, v in summ.items() if v["track"] == track}
         if not sel:
             continue

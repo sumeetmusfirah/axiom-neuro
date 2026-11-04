@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  actions: read   # collect re-reads shard artifacts of earlier runs whose collect failed
 
 concurrency:
   group: experiments
@@ -102,10 +103,11 @@ jobs:
       - name: Start Ollama and pull ${{ matrix.model }}
         if: matrix.model != 'none'
         run: |
-          command -v ollama || curl -fsSL https://ollama.com/install.sh | sh
+          for i in 1 2 3; do command -v ollama && break; curl -fsSL https://ollama.com/install.sh | sh || sleep $((i * 20)); done
+          command -v ollama
           curl -sf http://127.0.0.1:11434/api/tags >/dev/null || (nohup ollama serve >/tmp/ollama.log 2>&1 &)
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:11434/api/tags >/dev/null && break; sleep 2; done
-          ollama pull "${{ matrix.model }}"
+          for i in 1 2 3 4 5; do ollama pull "${{ matrix.model }}" && break; [ $i = 5 ] && exit 1; sleep $((i * 20)); done
       - name: Run shard ${{ matrix.shard }}
         run: |
           .venv/bin/axiom run --plan plan.json --shard ${{ matrix.shard }} --budget-min 320 \
@@ -133,6 +135,22 @@ jobs:
           pattern: shard-*
           path: results/
           merge-multiple: true
+      # If an earlier run's collect failed, its shards' episodes are still in its artifacts (kept 90 days).
+      # Pull them in here; collect skips any attempt the ledger already has, so this never double-counts.
+      - name: Recover shards from earlier runs whose collect failed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          since=$(date -u -d '14 days ago' +%s)
+          gh run list --workflow experiments.yml --status failure --limit 30 --json databaseId,createdAt \
+            --jq ".[] | select((.createdAt | fromdateiso8601) > $since) | .databaseId" |
+          while read -r id; do
+            [ "$id" = "${{ github.run_id }}" ] && continue
+            d=$(mktemp -d)
+            gh run download "$id" --pattern 'shard-*' --dir "$d" 2>/dev/null || { echo "run $id: no shard artifacts"; continue; }
+            for s in "$d"/shard-*; do cp -r "$s"/. results/; done
+            echo "run $id: re-read $(ls "$d" | wc -l) shard artifacts"
+          done
       - name: Merge into the latest ledger and commit (only when there is new data)
         # Rebuild on top of whatever main is now instead of rebasing generated files, which conflict.
         # collect is idempotent (by attempt id), so retrying after a race is safe.

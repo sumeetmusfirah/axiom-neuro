@@ -31,7 +31,13 @@ jobs:
             frozen=$(jq -r '.gates.tasks_frozen.passed' results/summary.json)
             [ "$frozen" = "false" ] && problems="$problems\n- A task manifest no longer matches its committed hash. Nothing will run until fixed."
           fi
-          [ -z "$problems" ] && { echo "healthy"; exit 0; }
+          if [ -z "$problems" ]; then
+            echo "healthy"
+            for n in $(gh issue list --label watchdog --state open --json number --jq '.[].number'); do
+              gh issue close "$n" --comment "Watchdog: healthy again (recent experiment runs succeed, gates pass). Closing automatically."
+            done
+            exit 0
+          fi
           open=$(gh issue list --label watchdog --state open --json number --jq length)
           [ "$open" != "0" ] && { echo "issue already open"; exit 0; }
           gh label create watchdog --color B60205 2>/dev/null || true

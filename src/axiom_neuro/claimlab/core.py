@@ -27,7 +27,6 @@ ACTIONS = ("sample", "summarize", "regress", "submit")
 MIN_N, MAX_N = 50, 800
 
 
-# ----------------------------------------------------------------------------- estimands
 
 def _w(df: pd.DataFrame, weight: str | None, weighted: bool) -> np.ndarray:
     if weighted and weight and weight in df:
@@ -139,7 +138,6 @@ def holds(value: float, op: str, thr: float) -> bool:
     return {">": value > thr, "<": value < thr, "abs<": abs(value) < thr}[op]
 
 
-# ----------------------------------------------------------------------------- tasks
 
 @dataclass
 class ClaimTask:
@@ -176,7 +174,6 @@ def load(manifest) -> list[ClaimTask]:
     return [ClaimTask.from_json(json.loads(l)) for l in manifest.read_text().splitlines() if l.strip()]
 
 
-# ----------------------------------------------------------------------------- the lab
 
 @dataclass
 class Episode:
@@ -208,7 +205,6 @@ class ClaimLab:
     def remaining(self) -> int:
         return self.task.budget - self.episode.spent
 
-    # --- wording
     def _source_text(self, s: str) -> str:
         named, abstract = self.spec.SOURCES[s][:2]
         return named if self.labels == "named" else abstract
@@ -252,7 +248,6 @@ Submit before turns run out.""".strip()
             desc += " (values: " + ", ".join(str(x) for x in vals.values()) + ")"
         return desc
 
-    # --- translation between shown names and internal ones
     def _var(self, name) -> str:
         if name in self.inv:
             return self.inv[name]
@@ -282,7 +277,6 @@ Submit before turns run out.""".strip()
             out.append(self.datasets[i])
         return pd.concat(out)
 
-    # --- environment
     def step(self, action: str, args: dict) -> dict:
         args = args or {}
         try:
@@ -365,7 +359,6 @@ Submit before turns run out.""".strip()
         return {"ok": True}
 
 
-# ----------------------------------------------------------------------------- analysts and scoring
 
 def reference_claims(spec, task: ClaimTask, datasets: dict) -> dict:
     """Each claim's estimand computed on exactly the rows the agent bought, nothing else."""

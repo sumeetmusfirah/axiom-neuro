@@ -126,7 +126,6 @@ def value_labels(labels: str) -> dict:
     return {}
 
 
-# ----------------------------------------------------------------------------- data
 
 def fetch(path=DATA) -> dict:
     raw = pd.read_csv(URL)
@@ -159,7 +158,6 @@ def frame(task: core.ClaimTask | None = None) -> pd.DataFrame:
     return _CACHE["f"]
 
 
-# ----------------------------------------------------------------------------- tasks
 
 def full_pool() -> dict:
     f = frame()

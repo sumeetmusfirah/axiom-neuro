@@ -72,7 +72,6 @@ def value_labels(labels: str) -> dict:
     return {}
 
 
-# ----------------------------------------------------------------------------- data
 
 def fetch(path=DATA) -> dict:
     def xpt(name):
@@ -126,7 +125,6 @@ def frame(task: core.ClaimTask) -> pd.DataFrame:
     return _CACHE[key]
 
 
-# ----------------------------------------------------------------------------- tasks
 
 def _claims(f: pd.DataFrame, p: dict, rng) -> dict | None:
     """The six claims of one task, or None if any is too close to its threshold to have a clear answer."""

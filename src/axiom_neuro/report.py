@@ -241,7 +241,8 @@ def reproducibility(rows: list[dict]) -> dict:
 
 
 def leaderboard(cfg: dict, summ: dict) -> str:
-    added = {m["name"] for m in cfg["llm"]["models"] if m.get("added")}
+    added = {m["name"] for m in cfg["llm"]["models"] if m.get("added")} | \
+        {m["name"] for m in cfg.get("hosted", {}).get("models", [])}
     sel = sorted((v for v in summ.values() if v["track"] == "synthetic" and v["labels"] == "named"
                   and v["brier"] is not None), key=lambda v: v["brier"])
     if not sel:
@@ -314,8 +315,8 @@ def build(rows: list[dict] | None = None) -> dict:
                       f"| {_f(v['exact'])} | {_f(v['edge_acc'])} | {_f(v['confident_wrong'])} | {_f(v['trap_rate'])} "
                       f"| {_f(v['confound_handled'])} | {_f(v['ideal_on_own_data'])} | {_f(v['exact_train'])} | {_f(v['exact_heldout'])} |")
     if added:
-        md += ["", "† Added after preregistration by model intake (see `configs/experiment.toml`, `[intake]`). "
-               "Reported, but excluded from the preregistered tests."]
+        md += ["", "† Added after preregistration by model intake or as a hosted model (see `configs/experiment.toml`, "
+               "`[intake]` and `[hosted]`). Reported, but excluded from the preregistered tests."]
     md += ["", "## Preregistered hypotheses (see PREREGISTRATION.md)", ""]
     for h in hyp:
         md.append(f"- **{h['id']}** ({h['status']}): {h.get('text') or 'waiting for data'}")

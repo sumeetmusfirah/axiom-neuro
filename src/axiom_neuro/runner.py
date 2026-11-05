@@ -15,7 +15,7 @@ from pathlib import Path
 
 from . import analysis as A
 from .agents import baselines as B
-from .agents.llm import OllamaClient, run_llm
+from .agents.llm import OllamaClient, OpenRouterClient, QuotaExhausted, run_llm
 from .env import LabEnv
 from .mechanisms import TASK_TYPES
 from .params import REPO, load_params
@@ -49,6 +49,8 @@ def _study_change(item) -> dict:
 def _llm_client(item, cfg, client_factory):
     llm = cfg["llm"]
     temp = _study_change(item).get("temperature", llm["temperature"])
+    if client_factory is None and item.get("hosted"):
+        return OpenRouterClient(item["model"], temp, cfg["hosted"].get("max_tokens", 1500))
     return (client_factory or (lambda m: OllamaClient(
         m, temp, llm["num_predict"], llm["request_timeout_s"])))(item["model"])
 
@@ -205,10 +207,15 @@ def run_shard(plan: dict, shard: int, out_path: Path, budget_min: float, cfg: di
                          "attempt_id": uuid.uuid4().hex[:12],
                          "params_source": params.source, "manifest_sha": manifest_sha,
                          "git_sha": os.environ.get("GITHUB_SHA", "local")})
+            if item.get("hosted"):
+                base["hosted"] = True
             try:
                 row = run_item(item, tasks[item["task_id"]], params, cfg, client_factory)
                 base.update(row, status="ok")
                 stats["ok"] += 1
+            except QuotaExhausted as exc:  # not the episode's fault: write nothing, re-plan it next run
+                stats["quota_stopped"] = str(exc)[:200]
+                break
             except Exception as exc:  # recorded and retried by a later run, up to the cap
                 base.update(status="error", error=f"{type(exc).__name__}: {exc}",
                             trace=traceback.format_exc()[-2000:])

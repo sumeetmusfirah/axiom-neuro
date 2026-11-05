@@ -82,6 +82,70 @@ class OllamaClient:
             return json.loads(r.read())["message"]["content"]
 
 
+class QuotaExhausted(RuntimeError):
+    """The hosted provider's daily free quota is used up: stop the shard; the work is re-planned later."""
+
+
+class OpenRouterClient:
+    """A hosted open-weight model through OpenRouter (free tier: about 50 requests a day per account,
+    20 a minute). Hosted weights cannot be pinned by digest, so each row records the model id and the
+    provider that actually served it."""
+    URL = "https://openrouter.ai/api/v1/chat/completions"
+
+    def __init__(self, model: str, temperature: float = 0.7, max_tokens: int = 1500,
+                 timeout_s: int = 300, min_interval_s: float = 3.5):
+        self.model, self.temperature, self.max_tokens = model, temperature, max_tokens
+        self.timeout_s, self.min_interval_s = timeout_s, min_interval_s
+        self.key = os.environ.get("OPENROUTER_API_KEY", "")
+        self.served: str | None = None
+        self._last = 0.0
+
+    def digest(self) -> str | None:
+        return self.served
+
+    def chat(self, messages: list[dict], seed: int, actions=ACTIONS) -> str:
+        import time
+        if not self.key:
+            raise QuotaExhausted("OPENROUTER_API_KEY is not set")
+        body = {"model": self.model, "messages": messages, "temperature": self.temperature,
+                "seed": seed, "max_tokens": self.max_tokens}
+        for attempt in range(6):
+            wait = self.min_interval_s - (time.monotonic() - self._last)
+            if wait > 0:
+                time.sleep(wait)
+            self._last = time.monotonic()
+            req = urllib.request.Request(self.URL, data=json.dumps(body).encode(), headers={
+                "Content-Type": "application/json", "Authorization": f"Bearer {self.key}",
+                "X-Title": "axiom-neuro"})
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout_s) as r:
+                    out = json.loads(r.read())
+            except urllib.error.HTTPError as e:
+                text = e.read().decode(errors="replace")[:500]
+                if e.code == 429 and "day" in text.lower():
+                    raise QuotaExhausted(text) from e
+                if e.code in (429, 500, 502, 503, 504) and attempt < 5:
+                    time.sleep(10 * (attempt + 1))
+                    continue
+                raise RuntimeError(f"OpenRouter {e.code}: {text}") from e
+            except (urllib.error.URLError, TimeoutError, OSError):
+                if attempt < 5:
+                    time.sleep(10 * (attempt + 1))
+                    continue
+                raise
+            if "error" in out:
+                msg = json.dumps(out["error"])[:500]
+                if "day" in msg.lower() and "limit" in msg.lower():
+                    raise QuotaExhausted(msg)
+                if attempt < 5:
+                    time.sleep(10 * (attempt + 1))
+                    continue
+                raise RuntimeError(f"OpenRouter error: {msg}")
+            self.served = f"{out.get('model', self.model)}@{out.get('provider', '?')}"
+            return out["choices"][0]["message"].get("content") or ""
+        raise RuntimeError("OpenRouter: no reply after retries")
+
+
 def parse_action(text: str, actions=ACTIONS) -> tuple[str, dict, str]:
     s = text.strip()
     if "</think>" in s:  # some builds still emit reasoning; keep only the answer

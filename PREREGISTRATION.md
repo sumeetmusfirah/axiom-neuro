@@ -66,6 +66,10 @@ Exploratory. They change nothing above and are excluded from H1–H6 and B1–B3
 - **Agents and stopping.** Random and scripted reference agents (3 seeds) and every model in `[llm].models`, named and abstract labels, under the same adaptive seed rule as the primary study.
 - **Report.** Per cell: claim Brier (primary within each lab), exact match, claim accuracy, confident-wrong, wrong rate per trap kind, the ideal analysis of the agent's own rows (the same estimands on exactly the rows it bought), whether it used survey weights, and which sources it sampled. The named − abstract gap is reported descriptively, since both datasets are famous and models may recall answers rather than infer them.
 
+## Hosted open-weight models (added 2026-11-05, before any hosted episode ran)
+
+Exploratory. Large open-weight models served by OpenRouter's free tier (`[hosted]` in `configs/experiment.toml`): Nemotron 3 Ultra 550B and Gemma 4 31B, on the first 20 primary tasks (synthetic track, named labels, seed 0), under the same protocol. They run only when the repository has an `OPENROUTER_API_KEY` secret, one episode per scheduled run (the free quota is about 50 requests a day). An episode cut off by the daily quota is not recorded and is re-run later. Hosted weights cannot be pinned by digest; each row records the served model id and provider. Excluded from H1–H6 and B1–B3, and marked † in the tables.
+
 ## Deviations log
 
 - 2026-10-25 (before any LLM run): primary metric changed from exact match to Brier, after baseline simulations showed exact match is dominated by per-edge false positives of the ideal analyst (~8% per edge). Reason recorded in commit history.

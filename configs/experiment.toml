@@ -35,6 +35,23 @@ enabled = true
 seed = 20261104
 n_tasks = 20
 
+[hosted]
+# Large open-weight models served by OpenRouter's free tier (exploratory, added 2026-11-05).
+# Runs only when the repository secret OPENROUTER_API_KEY exists; without it nothing is queued.
+# Free tier: about 50 requests a day per account, so each run does a single episode (~12 requests).
+# Hosted weights cannot be digest-pinned: rows record the served model id and provider instead.
+enabled = true
+models = [
+  { name = "nvidia/nemotron-3-ultra-550b-a55b:free", params_b = 550 },
+  { name = "google/gemma-4-31b-it:free",             params_b = 31 },
+]
+tracks = ["synthetic"]
+labels = ["named"]
+seeds = 1
+n_tasks = 20
+episodes_per_run = 1
+max_tokens = 1500
+
 [baselines]
 agents = ["random", "scripted", "oracle"]
 seeds = 3

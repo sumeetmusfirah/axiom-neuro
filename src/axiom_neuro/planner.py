@@ -126,7 +126,7 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
         return items, g
     studies = S.pending(cfg, done, tasks, bio_tasks if bio_on else [])
     if items:
-        return studies + items + W.pending(cfg, rows, done), g
+        return studies + items + W.pending(cfg, rows, done) + hosted_items(cfg, done, tasks), g
 
     sc = cfg["seeds"]
     ok = L.ok_rows(L.primary(rows))
@@ -147,7 +147,29 @@ def pending_items(cfg: dict, rows: list[dict]) -> tuple[list[dict], dict]:
                     if seed + 1 >= sc["min_seeds"] and \
                             _halfwidth([r["scores"]["brier"] for r in cell]) <= sc["ci_halfwidth_target"]:
                         break  # precise enough: stop adding seeds to this cell
-    return studies + items + W.pending(cfg, rows, done), g
+    return studies + items + W.pending(cfg, rows, done) + hosted_items(cfg, done, tasks), g
+
+
+def hosted_items(cfg: dict, done: set, tasks: list) -> list[dict]:
+    """Hosted open-weight models (exploratory). Queued only when a key is configured, and only as many
+    episodes per run as the free daily quota allows; the rest wait for later runs."""
+    import os
+    h = cfg.get("hosted", {})
+    if not h.get("enabled") or not (os.environ.get("AXIOM_HOSTED") or os.environ.get("OPENROUTER_API_KEY")):
+        return []
+    pool = sorted(tasks, key=lambda t: t.task_id)[: h["n_tasks"]]
+    out = []
+    for seed in range(h["seeds"]):
+        for lab in h["labels"]:
+            for track in h["tracks"]:
+                for t in pool:
+                    for m in h["models"]:
+                        k = L.item_key(t.task_id, "llm", m["name"], track, lab, seed)
+                        if k not in done:
+                            out.append({"key": k, "task_id": t.task_id, "agent": "llm", "model": m["name"],
+                                        "track": track, "labels": lab, "seed": seed, "domain": "neuro",
+                                        "hosted": True, "est_min": 6})
+    return out[: h["episodes_per_run"]]
 
 
 # Execution order only (what gets run is unchanged): author studies first, then the headline cell,
@@ -166,8 +188,10 @@ def make_plan(cfg: dict, rows: list[dict]) -> dict:
     auto = cfg["automation"]
     cap_min = auto["shard_hours"] * 60
     by_model = defaultdict(list)
+    hosted = [it for it in items if it.get("hosted")]
     for it in items:
-        by_model[it["model"]].append(it)
+        if not it.get("hosted"):
+            by_model[it["model"]].append(it)
     shards = []
     for model, its in by_model.items():
         # Author studies first: they are the experiments the author is waiting on.
@@ -190,6 +214,8 @@ def make_plan(cfg: dict, rows: list[dict]) -> dict:
         for m in list(queues):
             if queues[m] and len(ordered) < auto["max_shards_per_run"]:
                 ordered.append(queues[m].pop(0))
+    if hosted:  # one light network-bound shard, outside the CPU parallelism cap
+        ordered.append({"model": "hosted", "items": hosted})
     for i, s in enumerate(ordered):
         s["shard"] = i
     n_wave = sum(1 for it in items if it.get("wave"))
@@ -202,5 +228,6 @@ def make_plan(cfg: dict, rows: list[dict]) -> dict:
         "n_pending_wave": n_wave,
         "n_pending_total": len(items),
         "shards": ordered,
-        "matrix": [{"shard": s["shard"], "model": s["model"]} for s in ordered],
+        "matrix": [{"shard": s["shard"], "model": s["model"],
+                    "hosted": any(it.get("hosted") for it in s["items"])} for s in ordered],
     }

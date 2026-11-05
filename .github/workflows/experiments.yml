@@ -35,6 +35,8 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: uv venv --python 3.11 && uv pip install -e .
       - id: plan
+        env:
+          AXIOM_HOSTED: ${{ secrets.OPENROUTER_API_KEY != '' && '1' || '' }}
         run: |
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           .venv/bin/axiom plan --out plan.json
@@ -104,7 +106,7 @@ jobs:
         with:
           name: plan
       - name: Start Ollama and pull ${{ matrix.model }}
-        if: matrix.model != 'none'
+        if: matrix.model != 'none' && !matrix.hosted
         run: |
           for i in 1 2 3; do command -v ollama && break; curl -fsSL https://ollama.com/install.sh | sh || sleep $((i * 20)); done
           command -v ollama
@@ -112,6 +114,8 @@ jobs:
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:11434/api/tags >/dev/null && break; sleep 2; done
           for i in 1 2 3 4 5; do ollama pull "${{ matrix.model }}" && break; [ $i = 5 ] && exit 1; sleep $((i * 20)); done
       - name: Run shard ${{ matrix.shard }}
+        env:
+          OPENROUTER_API_KEY: ${{ matrix.hosted && secrets.OPENROUTER_API_KEY || '' }}
         run: |
           .venv/bin/axiom run --plan plan.json --shard ${{ matrix.shard }} --budget-min 320 \
             --out results/incoming/${{ github.run_id }}-${{ matrix.shard }}.jsonl

@@ -1,8 +1,8 @@
 {
-  "generated": "2026-11-04T20:33:17.696253+00:00",
-  "episodes_ok": 3999,
-  "failed_attempts": 57,
-  "queued": 1401,
+  "generated": "2026-11-05T03:59:55.264541+00:00",
+  "episodes_ok": 4324,
+  "failed_attempts": 86,
+  "queued": 3216,
   "gates": {
     "fit_validated": {
       "passed": true,
@@ -589,6 +589,48 @@
       "parse_failures": 1.4333333333333333,
       "submit_rate": 0.7416666666666667
     },
+    "random|compas|named": {
+      "agent": "random",
+      "track": "compas",
+      "labels": "named",
+      "n": 60,
+      "exact": 0.4,
+      "exact_lo": 0.28333333333333327,
+      "exact_hi": 0.5333333333333333,
+      "edge_acc": 0.8361111111111111,
+      "brier": 0.13027784444444443,
+      "brier_lo": 0.10183083743055556,
+      "brier_hi": 0.16047783902777774,
+      "confident_wrong": 0.6,
+      "trap_rate": 0.31666666666666665,
+      "confound_handled": null,
+      "ideal_on_own_data": 0.4,
+      "exact_train": 0.4,
+      "exact_heldout": NaN,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "random|nhanes|named": {
+      "agent": "random",
+      "track": "nhanes",
+      "labels": "named",
+      "n": 60,
+      "exact": 0.5499999999999999,
+      "exact_lo": 0.39999999999999997,
+      "exact_hi": 0.7,
+      "edge_acc": 0.913888888888889,
+      "brier": 0.06131210833333334,
+      "brier_lo": 0.04117151229166666,
+      "brier_hi": 0.08298924055555555,
+      "confident_wrong": 0.18333333333333332,
+      "trap_rate": 0.25,
+      "confound_handled": null,
+      "ideal_on_own_data": 0.55,
+      "exact_train": 0.55,
+      "exact_heldout": NaN,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
     "random|sachs|named": {
       "agent": "random",
       "track": "sachs",
@@ -649,6 +691,48 @@
       "ideal_on_own_data": 0.45555555555555555,
       "exact_train": 0.49166666666666664,
       "exact_heldout": 0.38333333333333336,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "scripted|compas|named": {
+      "agent": "scripted",
+      "track": "compas",
+      "labels": "named",
+      "n": 60,
+      "exact": 0.9333333333333333,
+      "exact_lo": 0.8666666666666666,
+      "exact_hi": 0.9833333333333332,
+      "edge_acc": 0.9888888888888888,
+      "brier": 0.013697138888888887,
+      "brier_lo": 0.008827443819444444,
+      "brier_hi": 0.01935432152777777,
+      "confident_wrong": 0.0,
+      "trap_rate": 0.0,
+      "confound_handled": null,
+      "ideal_on_own_data": 0.9333333333333333,
+      "exact_train": 0.9333333333333333,
+      "exact_heldout": NaN,
+      "parse_failures": 0.0,
+      "submit_rate": 1.0
+    },
+    "scripted|nhanes|named": {
+      "agent": "scripted",
+      "track": "nhanes",
+      "labels": "named",
+      "n": 60,
+      "exact": 0.8833333333333334,
+      "exact_lo": 0.7666666666666667,
+      "exact_hi": 0.9666666666666666,
+      "edge_acc": 0.9805555555555556,
+      "brier": 0.018120816666666668,
+      "brier_lo": 0.010580764583333332,
+      "brier_hi": 0.02698738284722222,
+      "confident_wrong": 0.016666666666666666,
+      "trap_rate": 0.016666666666666666,
+      "confound_handled": null,
+      "ideal_on_own_data": 0.8833333333333333,
+      "exact_train": 0.8833333333333333,
+      "exact_heldout": NaN,
       "parse_failures": 0.0,
       "submit_rate": 1.0
     },
@@ -837,6 +921,24 @@
       "params_b": 14.8,
       "added": null,
       "digest": null
+    },
+    {
+      "name": "gemma4:12b",
+      "params_b": 12.0,
+      "added": "2026-11-04",
+      "digest": "6114515d63c1"
+    },
+    {
+      "name": "qwen3.5:9b",
+      "params_b": 9.0,
+      "added": "2026-11-04",
+      "digest": "56671c2ab938"
+    },
+    {
+      "name": "gemma4:e4b",
+      "params_b": 8.0,
+      "added": "2026-11-04",
+      "digest": "dc35e8d9c606"
     }
   ],
   "waves": []

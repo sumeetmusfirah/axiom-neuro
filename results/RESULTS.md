@@ -1,8 +1,8 @@
 # Axiom-Neuro results
 
-Auto-generated from `results/ledger.jsonl` (data as of 2026-11-04T20:33:17.696253+00:00). Do not edit by hand.
+Auto-generated from `results/ledger.jsonl` (data as of 2026-11-05T03:59:55.264541+00:00). Do not edit by hand.
 
-**Progress:** 3999 episodes scored, 57 failed attempts logged, 1401 queued. Setup pending: none.
+**Progress:** 4324 episodes scored, 86 failed attempts logged, 3216 queued. Setup pending: none.
 
 ## Gates
 
@@ -59,6 +59,22 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-04T20:33:17.69625
 | llama3.2:3b | abstract | 120 | 0.283 [0.267, 0.302] | 0.01 | 0.57 | 0.58 | 0.42 | – | 0.00 | 0.01 | – |
 | mistral:7b | named | 22 | 0.298 [0.258, 0.348] | 0.00 | 0.58 | 0.73 | 0.41 | – | 0.00 | 0.00 | – |
 | mistral:7b | abstract | 40 | 0.308 [0.277, 0.345] | 0.00 | 0.55 | 0.78 | 0.33 | – | 0.00 | 0.00 | – |
+
+## Results: Axiom-Health (exploratory; real NHANES 2017-18 adults, planted exposure)
+
+| Agent | Labels | n | Brier [95% CI] (primary, lower is better) | Exact match | Edge acc | Confident-wrong / ep | Fell for trap | Handled confound | Ideal analysis of own data | Train | Held-out |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| scripted | named | 60 | 0.018 [0.011, 0.027] | 0.88 | 0.98 | 0.02 | 0.02 | – | 0.88 | 0.88 | – |
+| random | named | 60 | 0.061 [0.041, 0.083] | 0.55 | 0.91 | 0.18 | 0.25 | – | 0.55 | 0.55 | – |
+
+## Results: Axiom-Ethics (exploratory; real COMPAS risk scores, ProPublica)
+
+| Agent | Labels | n | Brier [95% CI] (primary, lower is better) | Exact match | Edge acc | Confident-wrong / ep | Fell for trap | Handled confound | Ideal analysis of own data | Train | Held-out |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| scripted | named | 60 | 0.014 [0.009, 0.019] | 0.93 | 0.99 | 0.00 | 0.00 | – | 0.93 | 0.93 | – |
+| random | named | 60 | 0.130 [0.102, 0.160] | 0.40 | 0.84 | 0.60 | 0.32 | – | 0.40 | 0.40 | – |
+
+† Added after preregistration by model intake or as a hosted model (see `configs/experiment.toml`, `[intake]` and `[hosted]`). Reported, but excluded from the preregistered tests.
 
 ## Preregistered hypotheses (see PREREGISTRATION.md)
 

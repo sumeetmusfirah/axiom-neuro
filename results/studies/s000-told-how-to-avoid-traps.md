@@ -12,13 +12,13 @@ Brier is the mean edge Brier score (lower is better). Difference = study minus t
 
 | Model | Track | Labels | n | Study Brier | Main-study Brier | Difference [95% CI] | Verdict | Fell for trap | Analysis error |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| llama3.2:3b | synthetic | named | 40 | 0.276 | 0.301 | -0.025 [-0.054, 0.003] | no clear difference | 0.25 | 0.190 |
+| llama3.2:3b | synthetic | named | 40 | 0.276 | 0.303 | -0.027 [-0.054, -0.000] | better | 0.25 | 0.190 |
 | qwen3:4b | synthetic | named | 40 | 0.146 | 0.170 | -0.024 [-0.062, 0.015] | no clear difference | 0.20 | 0.081 |
-| gemma3:4b | synthetic | named | 40 | 0.241 | 0.228 | 0.012 [-0.013, 0.038] | no clear difference | 0.30 | 0.169 |
+| gemma3:4b | synthetic | named | 40 | 0.241 | 0.228 | 0.013 [-0.012, 0.038] | no clear difference | 0.30 | 0.169 |
 | mistral:7b | synthetic | named | 40 | 0.258 | 0.240 | 0.018 [-0.024, 0.059] | no clear difference | 0.15 | 0.176 |
-| qwen3:14b | synthetic | named | 40 | 0.120 | 0.126 | -0.005 [-0.021, 0.011] | no clear difference | 0.20 | 0.054 |
+| qwen3:14b | synthetic | named | 40 | 0.120 | 0.125 | -0.005 [-0.022, 0.010] | no clear difference | 0.20 | 0.054 |
 | gemma4:12b | synthetic | named | 6 | 0.127 | – | – (no paired baseline yet) | – | 0.75 | 0.051 |
-| qwen3.5:9b | synthetic | named | 40 | 0.116 | 0.142 | -0.009 [-0.087, 0.090] | no clear difference | 0.05 | 0.072 |
+| qwen3.5:9b | synthetic | named | 40 | 0.116 | 0.123 | -0.015 [-0.071, 0.044] | no clear difference | 0.05 | 0.072 |
 | gemma4:e4b | synthetic | named | 40 | 0.088 | 0.091 | -0.003 [-0.029, 0.024] | no clear difference | 0.30 | 0.036 |
 
 Exploratory: decided after the preregistration and kept out of every preregistered test.

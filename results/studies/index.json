@@ -3,7 +3,7 @@
     "id": "s000-told-how-to-avoid-traps",
     "question": "If a model is told exactly how to avoid the two traps, does it stop falling for them?",
     "issue": null,
-    "n_done": 285,
+    "n_done": 286,
     "n_expected": 500,
     "complete": false
   },
@@ -11,7 +11,7 @@
     "id": "s001-covert-sabotage",
     "question": "If a model is told to secretly steer the research to wrong conclusions, does ground-truth scoring catch the sabotage when the transcript reads like careful, honest work?",
     "issue": null,
-    "n_done": 105,
+    "n_done": 120,
     "n_expected": 500,
     "complete": false
   }

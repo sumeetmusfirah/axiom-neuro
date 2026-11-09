@@ -33,6 +33,10 @@ jobs:
         with:
           ref: main
       - uses: astral-sh/setup-uv@v6
+        id: uv
+        continue-on-error: true
+      - uses: astral-sh/setup-uv@v6  # second try: the uv download sometimes returns 504
+        if: steps.uv.outcome == 'failure'
       - run: uv venv --python 3.11 && uv pip install -e .
       - id: plan
         env:
@@ -56,6 +60,10 @@ jobs:
         with:
           ref: main
       - uses: astral-sh/setup-uv@v6
+        id: uv
+        continue-on-error: true
+      - uses: astral-sh/setup-uv@v6  # second try: the uv download sometimes returns 504
+        if: steps.uv.outcome == 'failure'
       - run: uv venv --python 3.11 && uv pip install -e ".[fit]"
       - name: Fit simulator to ERP CORE (validation result is committed either way)
         if: contains(needs.plan.outputs.setup, 'fit')
@@ -101,14 +109,24 @@ jobs:
         with:
           ref: ${{ needs.plan.outputs.sha }}
       - uses: astral-sh/setup-uv@v6
+        id: uv
+        continue-on-error: true
+      - uses: astral-sh/setup-uv@v6  # second try: the uv download sometimes returns 504
+        if: steps.uv.outcome == 'failure'
       - run: uv venv --python 3.11 && uv pip install -e .
       - uses: actions/download-artifact@v4
         with:
           name: plan
       - name: Start Ollama and pull ${{ matrix.model }}
         if: matrix.model != 'none' && !matrix.hosted
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          for i in 1 2 3; do command -v ollama && break; curl -fsSL https://ollama.com/install.sh | sh || sleep $((i * 20)); done
+          for i in 1 2 3 4; do command -v ollama && break; curl -fsSL https://ollama.com/install.sh | sh || sleep $((i * 30)); done
+          if ! command -v ollama; then  # ollama.com down: install the same release from GitHub
+            gh release download -R ollama/ollama -p 'ollama-linux-amd64.tar.zst' -D /tmp/ollama
+            sudo tar -C /usr/local --zstd -xf /tmp/ollama/ollama-linux-amd64.tar.zst
+          fi
           command -v ollama
           curl -sf http://127.0.0.1:11434/api/tags >/dev/null || (nohup ollama serve >/tmp/ollama.log 2>&1 &)
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:11434/api/tags >/dev/null && break; sleep 2; done
@@ -136,6 +154,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
+        id: uv
+        continue-on-error: true
+      - uses: astral-sh/setup-uv@v6  # second try: the uv download sometimes returns 504
+        if: steps.uv.outcome == 'failure'
       - run: uv venv --python 3.11 && uv pip install -e .
       - uses: actions/download-artifact@v4
         with:

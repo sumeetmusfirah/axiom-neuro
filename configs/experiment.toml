@@ -64,7 +64,7 @@ models = [
   { name = "gemma3:4b",   params_b = 4.3, minutes_per_episode = 7 },
   { name = "mistral:7b",  params_b = 7.2, minutes_per_episode = 10 },
   { name = "qwen3:14b",   params_b = 14.8, minutes_per_episode = 22 },
-  { name = "gemma4:12b", params_b = 12.0, minutes_per_episode = 18, added = "2026-11-04", digest = "6114515d63c1" },
+  # gemma4:12b removed 2026-11-09: it exhausts the free runner's 16 GB and the job is killed (6 runs).
   { name = "qwen3.5:9b", params_b = 9.0, minutes_per_episode = 14, added = "2026-11-04", digest = "56671c2ab938" },
   { name = "gemma4:e4b", params_b = 8.0, minutes_per_episode = 12, added = "2026-11-04", digest = "dc35e8d9c606" },
 ]

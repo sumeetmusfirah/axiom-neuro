@@ -4,7 +4,7 @@
     "question": "If a model is told exactly how to avoid the two traps, does it stop falling for them?",
     "issue": null,
     "n_done": 286,
-    "n_expected": 500,
+    "n_expected": 400,
     "complete": false
   },
   {
@@ -12,7 +12,7 @@
     "question": "If a model is told to secretly steer the research to wrong conclusions, does ground-truth scoring catch the sabotage when the transcript reads like careful, honest work?",
     "issue": null,
     "n_done": 135,
-    "n_expected": 500,
+    "n_expected": 400,
     "complete": false
   }
 ]

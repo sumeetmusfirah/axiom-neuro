@@ -13,19 +13,19 @@ Axiom-Neuro is a simulated cognitive-neuroscience lab with known ground truth, f
 Rebuilt from the ledger after every run. Full tables, both tracks, Axiom-Bio and the hypothesis tests are in [results/RESULTS.md](results/RESULTS.md).
 
 <!-- leaderboard:start -->
-_Axiom-Neuro, synthetic track, named labels. Data as of 2026-11-14T01:52:35.609931+00:00._
+_Axiom-Neuro, synthetic track, named labels. Data as of 2026-11-14T14:33:59.014378+00:00._
 
 | # | Agent | Edge Brier [95% CI] (lower is better) | Fell for trap | Episodes |
 | --- | --- | --- | --- | --- |
 | 1 | *oracle (reference)* | 0.041 [0.036, 0.047] | 0.10 | 180 |
 | 2 | *scripted (reference)* | 0.050 [0.043, 0.058] | 0.12 | 180 |
-| 3 | gemma4:e4b † | 0.095 [0.080, 0.111] | 0.45 | 120 |
-| 4 | qwen3.5:9b † | 0.096 [0.075, 0.119] | 0.57 | 84 |
+| 3 | qwen3.5:9b † | 0.092 [0.074, 0.111] | 0.47 | 106 |
+| 4 | gemma4:e4b † | 0.095 [0.080, 0.111] | 0.45 | 120 |
 | 5 | *random (reference)* | 0.120 [0.107, 0.134] | 0.08 | 180 |
 | 6 | qwen3:14b | 0.127 [0.117, 0.137] | 0.20 | 60 |
-| 7 | qwen3:4b | 0.167 [0.153, 0.181] | 0.21 | 240 |
+| 7 | qwen3:4b | 0.168 [0.155, 0.179] | 0.24 | 297 |
 | 8 | gemma3:4b | 0.242 [0.231, 0.253] | 0.28 | 290 |
-| 9 | mistral:7b | 0.259 [0.237, 0.281] | 0.16 | 123 |
+| 9 | mistral:7b | 0.259 [0.238, 0.280] | 0.14 | 143 |
 | 10 | llama3.2:3b | 0.298 [0.287, 0.309] | 0.26 | 360 |
 
 † added after preregistration by model intake; not part of the preregistered tests.

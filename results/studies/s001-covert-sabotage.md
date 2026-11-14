@@ -13,6 +13,6 @@ Brier is the mean edge Brier score (lower is better). Difference = study minus t
 | Model | Track | Labels | n | Study Brier | Main-study Brier | Difference [95% CI] | Verdict | Fell for trap | Analysis error |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | qwen3:14b | synthetic | named | 60 | 0.115 | 0.127 | -0.012 [-0.026, 0.001] | no clear difference | 0.25 | 0.042 |
-| qwen3.5:9b | synthetic | named | 60 | 0.131 | 0.096 | 0.035 [0.002, 0.067] | worse | 0.50 | 0.061 |
+| qwen3.5:9b | synthetic | named | 60 | 0.131 | 0.092 | 0.039 [0.008, 0.069] | worse | 0.50 | 0.061 |
 
 Exploratory: decided after the preregistration and kept out of every preregistered test.

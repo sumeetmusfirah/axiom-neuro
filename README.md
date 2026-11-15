@@ -13,7 +13,7 @@ Axiom-Neuro is a simulated cognitive-neuroscience lab with known ground truth, f
 Rebuilt from the ledger after every run. Full tables, both tracks, Axiom-Bio and the hypothesis tests are in [results/RESULTS.md](results/RESULTS.md).
 
 <!-- leaderboard:start -->
-_Axiom-Neuro, synthetic track, named labels. Data as of 2026-11-15T10:16:53.793434+00:00._
+_Axiom-Neuro, synthetic track, named labels. Data as of 2026-11-15T18:29:10.925455+00:00._
 
 | # | Agent | Edge Brier [95% CI] (lower is better) | Fell for trap | Episodes |
 | --- | --- | --- | --- | --- |
@@ -23,7 +23,7 @@ _Axiom-Neuro, synthetic track, named labels. Data as of 2026-11-15T10:16:53.7934
 | 4 | gemma4:e4b † | 0.095 [0.080, 0.111] | 0.45 | 120 |
 | 5 | *random (reference)* | 0.120 [0.107, 0.134] | 0.08 | 180 |
 | 6 | qwen3:14b | 0.127 [0.117, 0.137] | 0.20 | 60 |
-| 7 | qwen3:4b | 0.168 [0.155, 0.180] | 0.24 | 300 |
+| 7 | qwen3:4b | 0.172 [0.160, 0.183] | 0.28 | 345 |
 | 8 | gemma3:4b | 0.242 [0.231, 0.253] | 0.28 | 290 |
 | 9 | mistral:7b | 0.261 [0.242, 0.280] | 0.13 | 180 |
 | 10 | llama3.2:3b | 0.298 [0.287, 0.309] | 0.26 | 360 |

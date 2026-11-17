@@ -1,8 +1,8 @@
 # Axiom-Neuro results
 
-Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T07:46:48.436917+00:00). Do not edit by hand.
+Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T16:16:39.108917+00:00). Do not edit by hand.
 
-**Progress:** 11638 episodes scored, 206 failed attempts logged, 1768 queued. Setup pending: none.
+**Progress:** 11872 episodes scored, 217 failed attempts logged, 1635 queued. Setup pending: none.
 
 ## Gates
 
@@ -23,10 +23,10 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T07:46:48.43691
 | gemma4:e4b † | named | 120 | 0.095 [0.080, 0.111] | 0.49 | 0.89 | 0.37 | 0.45 | 0.96 | 0.81 | 0.42 | 0.62 |
 | random | named | 180 | 0.120 [0.107, 0.134] | 0.46 | 0.87 | 0.32 | 0.08 | 0.69 | 0.46 | 0.49 | 0.38 |
 | gemma4:e4b † | abstract | 120 | 0.137 [0.123, 0.152] | 0.25 | 0.84 | 0.39 | 0.38 | 0.97 | 0.76 | 0.24 | 0.28 |
-| qwen3:14b | named | 90 | 0.140 [0.129, 0.150] | 0.68 | 0.92 | 0.24 | 0.37 | 0.96 | 0.81 | 0.60 | 0.80 |
+| qwen3:14b | named | 103 | 0.139 [0.129, 0.148] | 0.68 | 0.93 | 0.21 | 0.33 | 0.97 | 0.80 | 0.62 | 0.73 |
 | qwen3:14b | abstract | 60 | 0.161 [0.149, 0.172] | 0.35 | 0.87 | 0.18 | 0.40 | 0.95 | 0.80 | 0.30 | 0.45 |
-| qwen3:4b | named | 360 | 0.173 [0.162, 0.184] | 0.23 | 0.79 | 0.52 | 0.29 | 0.77 | 0.79 | 0.21 | 0.28 |
-| qwen3:4b | abstract | 360 | 0.184 [0.170, 0.200] | 0.14 | 0.77 | 0.84 | 0.13 | 0.77 | 0.81 | 0.12 | 0.17 |
+| qwen3:4b | named | 405 | 0.177 [0.165, 0.187] | 0.22 | 0.79 | 0.56 | 0.29 | 0.77 | 0.79 | 0.20 | 0.27 |
+| qwen3:4b | abstract | 381 | 0.185 [0.170, 0.200] | 0.14 | 0.77 | 0.83 | 0.13 | 0.75 | 0.81 | 0.12 | 0.17 |
 | gemma3:4b | abstract | 420 | 0.242 [0.231, 0.252] | 0.11 | 0.70 | 0.75 | 0.41 | 0.94 | 0.85 | 0.06 | 0.21 |
 | gemma3:4b | named | 290 | 0.242 [0.231, 0.253] | 0.12 | 0.71 | 0.56 | 0.28 | 0.94 | 0.83 | 0.10 | 0.14 |
 | mistral:7b | named | 180 | 0.261 [0.242, 0.280] | 0.13 | 0.72 | 0.69 | 0.13 | 0.82 | 0.86 | 0.14 | 0.12 |
@@ -40,8 +40,8 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T07:46:48.43691
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | oracle | named | 180 | 0.044 [0.039, 0.049] | 0.77 | 0.96 | 0.03 | 0.18 | 1.00 | 0.77 | 0.75 | 0.80 |
 | scripted | named | 180 | 0.049 [0.044, 0.053] | 0.76 | 0.96 | 0.03 | 0.15 | 1.00 | 0.76 | 0.77 | 0.73 |
+| qwen3.5:9b † | named | 111 | 0.070 [0.054, 0.088] | 0.69 | 0.91 | 0.13 | 0.25 | 0.62 | 0.77 | 0.65 | 0.74 |
 | gemma4:e4b † | named | 120 | 0.071 [0.060, 0.083] | 0.60 | 0.93 | 0.27 | 0.42 | 0.97 | 0.69 | 0.59 | 0.62 |
-| qwen3.5:9b † | named | 89 | 0.072 [0.052, 0.093] | 0.72 | 0.91 | 0.13 | 0.33 | 0.58 | 0.80 | 0.64 | 0.80 |
 | qwen3.5:9b † | abstract | 60 | 0.077 [0.054, 0.104] | 0.70 | 0.92 | 0.20 | 0.20 | 0.80 | 0.70 | 0.65 | 0.80 |
 | random | named | 180 | 0.098 [0.086, 0.111] | 0.57 | 0.91 | 0.14 | 0.08 | 0.69 | 0.57 | 0.54 | 0.62 |
 | gemma4:e4b † | abstract | 120 | 0.123 [0.110, 0.136] | 0.37 | 0.86 | 0.33 | 0.25 | 0.96 | 0.78 | 0.33 | 0.45 |
@@ -52,7 +52,7 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T07:46:48.43691
 | gemma3:4b | named | 215 | 0.228 [0.218, 0.239] | 0.11 | 0.72 | 0.47 | 0.20 | 0.94 | 0.84 | 0.10 | 0.12 |
 | gemma3:4b | abstract | 360 | 0.246 [0.236, 0.254] | 0.09 | 0.70 | 0.74 | 0.35 | 0.98 | 0.88 | 0.06 | 0.15 |
 | mistral:7b | named | 180 | 0.261 [0.241, 0.284] | 0.13 | 0.74 | 0.59 | 0.07 | 0.81 | 0.79 | 0.13 | 0.12 |
-| mistral:7b | abstract | 131 | 0.279 [0.257, 0.304] | 0.09 | 0.68 | 0.78 | 0.18 | 0.71 | 0.84 | 0.08 | 0.10 |
+| mistral:7b | abstract | 162 | 0.274 [0.254, 0.296] | 0.08 | 0.68 | 0.79 | 0.19 | 0.70 | 0.85 | 0.08 | 0.08 |
 | llama3.2:3b | abstract | 300 | 0.282 [0.271, 0.294] | 0.02 | 0.63 | 0.64 | 0.23 | 0.82 | 0.68 | 0.03 | 0.01 |
 | llama3.2:3b | named | 420 | 0.302 [0.292, 0.311] | 0.02 | 0.59 | 0.84 | 0.32 | 0.82 | 0.70 | 0.03 | 0.00 |
 
@@ -73,8 +73,8 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T07:46:48.43691
 | qwen3:14b | abstract | 40 | 0.286 [0.268, 0.305] | 0.00 | 0.54 | 0.68 | 0.65 | – | 0.00 | 0.00 | – |
 | llama3.2:3b | abstract | 320 | 0.291 [0.281, 0.301] | 0.01 | 0.56 | 0.65 | 0.48 | – | 0.00 | 0.01 | – |
 | mistral:7b | abstract | 80 | 0.303 [0.282, 0.325] | 0.00 | 0.55 | 0.78 | 0.30 | – | 0.00 | 0.00 | – |
+| gemma4:e4b † | abstract | 80 | 0.308 [0.281, 0.338] | 0.04 | 0.56 | 1.35 | 0.79 | – | 0.00 | 0.04 | – |
 | mistral:7b | named | 80 | 0.309 [0.280, 0.342] | 0.00 | 0.56 | 0.78 | 0.33 | – | 0.00 | 0.00 | – |
-| gemma4:e4b † | abstract | 68 | 0.311 [0.282, 0.342] | 0.03 | 0.56 | 1.37 | 0.78 | – | 0.00 | 0.03 | – |
 | gemma4:e4b † | named | 80 | 0.317 [0.286, 0.349] | 0.05 | 0.56 | 1.64 | 0.82 | – | 0.00 | 0.05 | – |
 
 ## Results: Axiom-Health (exploratory; real NHANES 2017-18 adults, planted exposure)
@@ -84,18 +84,18 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T07:46:48.43691
 | scripted | named | 60 | 0.018 [0.011, 0.027] | 0.88 | 0.98 | 0.02 | 0.02 | – | 0.88 | 0.88 | – |
 | random | named | 60 | 0.061 [0.041, 0.083] | 0.55 | 0.91 | 0.18 | 0.25 | – | 0.55 | 0.55 | – |
 | qwen3.5:9b † | abstract | 20 | 0.116 [0.070, 0.165] | 0.45 | 0.82 | 0.60 | 0.35 | – | 0.75 | 0.45 | – |
-| gemma4:e4b † | named | 20 | 0.125 [0.088, 0.162] | 0.40 | 0.88 | 0.60 | 0.20 | – | 0.85 | 0.40 | – |
+| gemma4:e4b † | named | 24 | 0.127 [0.091, 0.164] | 0.38 | 0.89 | 0.58 | 0.17 | – | 0.83 | 0.42 | – |
 | gemma4:e4b † | abstract | 20 | 0.146 [0.095, 0.203] | 0.35 | 0.84 | 0.95 | 0.20 | – | 0.65 | 0.35 | – |
 | qwen3.5:9b † | named | 20 | 0.185 [0.149, 0.218] | 0.10 | 0.61 | 0.40 | 0.35 | – | 0.45 | 0.10 | – |
 | qwen3:14b | abstract | 20 | 0.206 [0.160, 0.252] | 0.15 | 0.59 | 0.85 | 0.55 | – | 0.40 | 0.15 | – |
 | qwen3:14b | named | 20 | 0.217 [0.175, 0.261] | 0.05 | 0.63 | 1.30 | 0.35 | – | 0.30 | 0.05 | – |
 | qwen3:4b | named | 60 | 0.238 [0.232, 0.244] | 0.05 | 0.41 | 0.05 | 0.25 | – | 0.48 | 0.05 | – |
 | qwen3:4b | abstract | 100 | 0.241 [0.230, 0.250] | 0.07 | 0.43 | 0.14 | 0.29 | – | 0.57 | 0.07 | – |
-| gemma3:4b | named | 160 | 0.245 [0.224, 0.268] | 0.07 | 0.50 | 0.52 | 0.33 | – | 0.41 | 0.07 | – |
+| gemma3:4b | named | 180 | 0.245 [0.227, 0.264] | 0.07 | 0.50 | 0.52 | 0.34 | – | 0.42 | 0.07 | – |
 | mistral:7b | abstract | 40 | 0.258 [0.243, 0.274] | 0.03 | 0.38 | 0.17 | 0.30 | – | 0.38 | 0.03 | – |
 | llama3.2:3b | abstract | 200 | 0.260 [0.245, 0.274] | 0.04 | 0.47 | 0.59 | 0.35 | – | 0.48 | 0.04 | – |
+| gemma3:4b | abstract | 180 | 0.275 [0.257, 0.294] | 0.02 | 0.40 | 0.56 | 0.47 | – | 0.46 | 0.02 | – |
 | mistral:7b | named | 40 | 0.276 [0.246, 0.311] | 0.05 | 0.40 | 0.33 | 0.40 | – | 0.53 | 0.05 | – |
-| gemma3:4b | abstract | 160 | 0.276 [0.256, 0.298] | 0.01 | 0.40 | 0.57 | 0.46 | – | 0.45 | 0.01 | – |
 | llama3.2:3b | named | 200 | 0.277 [0.258, 0.295] | 0.03 | 0.44 | 0.68 | 0.41 | – | 0.44 | 0.03 | – |
 
 ## Results: Axiom-Ethics (exploratory; real COMPAS risk scores, ProPublica)
@@ -110,13 +110,13 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T07:46:48.43691
 | gemma4:e4b † | abstract | 20 | 0.160 [0.100, 0.230] | 0.35 | 0.82 | 1.10 | 0.25 | – | 0.70 | 0.35 | – |
 | qwen3:14b | abstract | 20 | 0.199 [0.169, 0.226] | 0.05 | 0.69 | 0.95 | 0.60 | – | 0.50 | 0.05 | – |
 | qwen3:14b | named | 20 | 0.222 [0.184, 0.259] | 0.05 | 0.64 | 1.30 | 0.50 | – | 0.55 | 0.05 | – |
-| qwen3:4b | named | 114 | 0.229 [0.210, 0.246] | 0.07 | 0.53 | 0.14 | 0.70 | – | 0.61 | 0.07 | – |
+| qwen3:4b | named | 120 | 0.231 [0.213, 0.247] | 0.07 | 0.53 | 0.13 | 0.69 | – | 0.62 | 0.07 | – |
 | qwen3:4b | abstract | 80 | 0.242 [0.234, 0.250] | 0.01 | 0.49 | 0.09 | 0.79 | – | 0.55 | 0.01 | – |
 | mistral:7b | named | 40 | 0.269 [0.252, 0.289] | 0.00 | 0.48 | 0.25 | 0.80 | – | 0.50 | 0.00 | – |
 | mistral:7b | abstract | 40 | 0.276 [0.248, 0.308] | 0.00 | 0.49 | 0.38 | 0.68 | – | 0.47 | 0.00 | – |
-| gemma3:4b | abstract | 140 | 0.284 [0.265, 0.301] | 0.01 | 0.50 | 0.73 | 0.69 | – | 0.37 | 0.01 | – |
+| gemma3:4b | abstract | 160 | 0.286 [0.268, 0.303] | 0.01 | 0.50 | 0.77 | 0.68 | – | 0.36 | 0.01 | – |
 | llama3.2:3b | abstract | 200 | 0.291 [0.274, 0.309] | 0.00 | 0.49 | 0.82 | 0.74 | – | 0.47 | 0.00 | – |
-| gemma3:4b | named | 140 | 0.297 [0.278, 0.319] | 0.00 | 0.50 | 0.98 | 0.73 | – | 0.48 | 0.00 | – |
+| gemma3:4b | named | 160 | 0.295 [0.278, 0.316] | 0.00 | 0.50 | 0.96 | 0.71 | – | 0.51 | 0.00 | – |
 | llama3.2:3b | named | 200 | 0.303 [0.281, 0.323] | 0.02 | 0.51 | 0.91 | 0.69 | – | 0.31 | 0.01 | – |
 
 † Added after preregistration by model intake or as a hosted model (see `configs/experiment.toml`, `[intake]` and `[hosted]`). Reported, but excluded from the preregistered tests.
@@ -124,11 +124,11 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-17T07:46:48.43691
 ## Preregistered hypotheses (see PREREGISTRATION.md)
 
 - **H1** (evaluated): 5/5 models' Brier CI lies wholly above (worse than) the scripted baseline (0.050).
-- **H2** (evaluated): llama3.2:3b: trap 0.26 vs mirror denial 0.66, Holm p = 1; qwen3:4b: trap 0.29 vs mirror denial 0.31, Holm p = 1; gemma3:4b: trap 0.28 vs mirror denial 0.41, Holm p = 1; mistral:7b: trap 0.13 vs mirror denial 0.62, Holm p = 1; qwen3:14b: trap 0.37 vs mirror denial 0.10, Holm p = 0.172
-- **H3** (evaluated): llama3.2:3b: own claims 0.02 vs ideal analysis of its data 0.66; qwen3:4b: own claims 0.23 vs ideal analysis of its data 0.79; gemma3:4b: own claims 0.12 vs ideal analysis of its data 0.83; mistral:7b: own claims 0.13 vs ideal analysis of its data 0.86; qwen3:14b: own claims 0.68 vs ideal analysis of its data 0.81
+- **H2** (evaluated): llama3.2:3b: trap 0.26 vs mirror denial 0.66, Holm p = 1; qwen3:4b: trap 0.29 vs mirror denial 0.31, Holm p = 1; gemma3:4b: trap 0.28 vs mirror denial 0.41, Holm p = 1; mistral:7b: trap 0.13 vs mirror denial 0.62, Holm p = 1; qwen3:14b: trap 0.33 vs mirror denial 0.20, Holm p = 0.913
+- **H3** (evaluated): llama3.2:3b: own claims 0.02 vs ideal analysis of its data 0.66; qwen3:4b: own claims 0.22 vs ideal analysis of its data 0.79; gemma3:4b: own claims 0.12 vs ideal analysis of its data 0.83; mistral:7b: own claims 0.13 vs ideal analysis of its data 0.86; qwen3:14b: own claims 0.68 vs ideal analysis of its data 0.80
 - **H4** (evaluated): Spearman rho(size, Brier) = -0.60 (negative = bigger is better; n = 5, p = 0.285)
 - **H5** (evaluated): Kendall tau synthetic vs semi-synthetic agent ranking = 1.00 (n = 8)
-- **H6** (evaluated): llama3.2:3b: Brier abstract - named = -0.016 (positive = names help); qwen3:4b: Brier abstract - named = +0.011 (positive = names help); gemma3:4b: Brier abstract - named = -0.000 (positive = names help); mistral:7b: Brier abstract - named = +0.013 (positive = names help); qwen3:14b: Brier abstract - named = +0.021 (positive = names help)
+- **H6** (evaluated): llama3.2:3b: Brier abstract - named = -0.016 (positive = names help); qwen3:4b: Brier abstract - named = +0.008 (positive = names help); gemma3:4b: Brier abstract - named = -0.000 (positive = names help); mistral:7b: Brier abstract - named = +0.013 (positive = names help); qwen3:14b: Brier abstract - named = +0.022 (positive = names help)
 - **B1** (evaluated): llama3.2:3b: Brier abstract - named = +0.011 over 40 tasks, Holm p = 0.176; qwen3:4b: Brier abstract - named = -0.002 over 40 tasks, Holm p = 1; gemma3:4b: Brier abstract - named = +0.003 over 40 tasks, Holm p = 1; mistral:7b: Brier abstract - named = -0.006 over 40 tasks, Holm p = 1; qwen3:14b: Brier abstract - named = +0.026 over 40 tasks, Holm p = 0.267
 - **B2** (evaluated): llama3.2:3b: Brier model - reference = +0.015 [-0.011, +0.039]; qwen3:4b: Brier model - reference = -0.025 [-0.048, -0.003]; gemma3:4b: Brier model - reference = +0.001 [-0.023, +0.025]; mistral:7b: Brier model - reference = +0.027 [-0.001, +0.056]; qwen3:14b: Brier model - reference = +0.009 [-0.019, +0.037]
 - **B3** (evaluated): llama3.2:3b: claims true 0.17 / reversed 0.15 / indirect 0.17 / confounded 0.15; qwen3:4b: claims true 0.08 / reversed 0.07 / indirect 0.05 / confounded 0.03; gemma3:4b: claims true 0.31 / reversed 0.23 / indirect 0.20 / confounded 0.25; mistral:7b: claims true 0.18 / reversed 0.16 / indirect 0.14 / confounded 0.19; qwen3:14b: claims true 0.29 / reversed 0.17 / indirect 0.11 / confounded 0.27

@@ -1,8 +1,8 @@
 # Axiom-Neuro results
 
-Auto-generated from `results/ledger.jsonl` (data as of 2026-11-20T13:39:07.510855+00:00). Do not edit by hand.
+Auto-generated from `results/ledger.jsonl` (data as of 2026-11-21T01:40:05.559934+00:00). Do not edit by hand.
 
-**Progress:** 12929 episodes scored, 247 failed attempts logged, 1478 queued. Setup pending: none.
+**Progress:** 13106 episodes scored, 247 failed attempts logged, 1481 queued. Setup pending: none.
 
 ## Gates
 
@@ -22,7 +22,7 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-20T13:39:07.51085
 | gemma4:e4b † | named | 180 | 0.090 [0.076, 0.105] | 0.54 | 0.90 | 0.33 | 0.38 | 0.95 | 0.77 | 0.48 | 0.65 |
 | qwen3.5:9b † | named | 120 | 0.091 [0.076, 0.107] | 0.58 | 0.90 | 0.24 | 0.42 | 0.69 | 0.69 | 0.54 | 0.68 |
 | random | named | 180 | 0.120 [0.107, 0.134] | 0.46 | 0.87 | 0.32 | 0.08 | 0.69 | 0.46 | 0.49 | 0.38 |
-| gemma4:e4b † | abstract | 152 | 0.136 [0.123, 0.149] | 0.26 | 0.84 | 0.45 | 0.46 | 0.97 | 0.77 | 0.24 | 0.29 |
+| gemma4:e4b † | abstract | 180 | 0.135 [0.122, 0.147] | 0.28 | 0.84 | 0.42 | 0.38 | 0.97 | 0.76 | 0.25 | 0.33 |
 | qwen3:14b | named | 120 | 0.138 [0.129, 0.147] | 0.69 | 0.94 | 0.18 | 0.28 | 0.97 | 0.81 | 0.65 | 0.78 |
 | qwen3:14b | abstract | 120 | 0.152 [0.144, 0.161] | 0.47 | 0.89 | 0.12 | 0.30 | 0.97 | 0.82 | 0.44 | 0.55 |
 | qwen3:4b | named | 420 | 0.176 [0.165, 0.187] | 0.22 | 0.79 | 0.55 | 0.29 | 0.77 | 0.79 | 0.20 | 0.28 |
@@ -30,7 +30,7 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-20T13:39:07.51085
 | gemma3:4b | abstract | 420 | 0.242 [0.231, 0.252] | 0.11 | 0.70 | 0.75 | 0.41 | 0.94 | 0.85 | 0.06 | 0.21 |
 | gemma3:4b | named | 290 | 0.242 [0.231, 0.253] | 0.12 | 0.71 | 0.56 | 0.28 | 0.94 | 0.83 | 0.10 | 0.14 |
 | mistral:7b | named | 240 | 0.259 [0.243, 0.274] | 0.15 | 0.72 | 0.66 | 0.15 | 0.84 | 0.85 | 0.16 | 0.11 |
-| mistral:7b | abstract | 231 | 0.271 [0.253, 0.290] | 0.05 | 0.70 | 0.88 | 0.10 | 0.84 | 0.82 | 0.03 | 0.09 |
+| mistral:7b | abstract | 240 | 0.272 [0.255, 0.290] | 0.05 | 0.70 | 0.88 | 0.10 | 0.83 | 0.82 | 0.03 | 0.09 |
 | llama3.2:3b | abstract | 300 | 0.282 [0.271, 0.292] | 0.02 | 0.63 | 0.63 | 0.22 | 0.78 | 0.65 | 0.04 | 0.00 |
 | llama3.2:3b | named | 360 | 0.298 [0.287, 0.309] | 0.02 | 0.59 | 0.81 | 0.26 | 0.72 | 0.66 | 0.03 | 0.01 |
 
@@ -41,17 +41,17 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-20T13:39:07.51085
 | oracle | named | 180 | 0.044 [0.039, 0.049] | 0.77 | 0.96 | 0.03 | 0.18 | 1.00 | 0.77 | 0.75 | 0.80 |
 | scripted | named | 180 | 0.049 [0.044, 0.053] | 0.76 | 0.96 | 0.03 | 0.15 | 1.00 | 0.76 | 0.77 | 0.73 |
 | qwen3.5:9b † | named | 120 | 0.071 [0.055, 0.089] | 0.69 | 0.92 | 0.12 | 0.25 | 0.66 | 0.76 | 0.65 | 0.78 |
-| gemma4:e4b † | named | 120 | 0.071 [0.060, 0.083] | 0.60 | 0.93 | 0.27 | 0.42 | 0.97 | 0.69 | 0.59 | 0.62 |
+| gemma4:e4b † | named | 144 | 0.072 [0.060, 0.083] | 0.61 | 0.92 | 0.29 | 0.44 | 0.97 | 0.72 | 0.58 | 0.62 |
 | qwen3.5:9b † | abstract | 120 | 0.080 [0.064, 0.098] | 0.62 | 0.91 | 0.23 | 0.15 | 0.81 | 0.69 | 0.66 | 0.53 |
 | random | named | 180 | 0.098 [0.086, 0.111] | 0.57 | 0.91 | 0.14 | 0.08 | 0.69 | 0.57 | 0.54 | 0.62 |
 | qwen3:14b | named | 120 | 0.121 [0.113, 0.129] | 0.80 | 0.97 | 0.06 | 0.12 | 0.99 | 0.80 | 0.80 | 0.80 |
 | gemma4:e4b † | abstract | 120 | 0.123 [0.110, 0.136] | 0.37 | 0.86 | 0.33 | 0.25 | 0.96 | 0.78 | 0.33 | 0.45 |
-| qwen3:14b | abstract | 60 | 0.142 [0.132, 0.151] | 0.42 | 0.89 | 0.07 | 0.00 | 0.95 | 0.93 | 0.45 | 0.35 |
+| qwen3:14b | abstract | 88 | 0.143 [0.135, 0.150] | 0.42 | 0.89 | 0.05 | 0.00 | 0.96 | 0.90 | 0.40 | 0.35 |
 | qwen3:4b | named | 420 | 0.164 [0.153, 0.175] | 0.26 | 0.79 | 0.47 | 0.18 | 0.70 | 0.79 | 0.24 | 0.30 |
 | qwen3:4b | abstract | 360 | 0.180 [0.162, 0.198] | 0.13 | 0.77 | 0.77 | 0.07 | 0.78 | 0.85 | 0.12 | 0.15 |
 | gemma3:4b | named | 215 | 0.228 [0.218, 0.239] | 0.11 | 0.72 | 0.47 | 0.20 | 0.94 | 0.84 | 0.10 | 0.12 |
 | gemma3:4b | abstract | 360 | 0.246 [0.236, 0.254] | 0.09 | 0.70 | 0.74 | 0.35 | 0.98 | 0.88 | 0.06 | 0.15 |
-| mistral:7b | named | 186 | 0.262 [0.242, 0.284] | 0.13 | 0.73 | 0.60 | 0.09 | 0.82 | 0.78 | 0.13 | 0.12 |
+| mistral:7b | named | 230 | 0.258 [0.241, 0.276] | 0.17 | 0.74 | 0.60 | 0.14 | 0.84 | 0.80 | 0.18 | 0.15 |
 | mistral:7b | abstract | 180 | 0.270 [0.251, 0.291] | 0.09 | 0.69 | 0.76 | 0.20 | 0.74 | 0.86 | 0.07 | 0.12 |
 | llama3.2:3b | abstract | 300 | 0.282 [0.271, 0.294] | 0.02 | 0.63 | 0.64 | 0.23 | 0.82 | 0.68 | 0.03 | 0.01 |
 | llama3.2:3b | named | 420 | 0.302 [0.292, 0.311] | 0.02 | 0.59 | 0.84 | 0.32 | 0.82 | 0.70 | 0.03 | 0.00 |
@@ -85,8 +85,8 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-20T13:39:07.51085
 | random | named | 60 | 0.061 [0.041, 0.083] | 0.55 | 0.91 | 0.18 | 0.25 | – | 0.55 | 0.55 | – |
 | gemma4:e4b † | abstract | 40 | 0.125 [0.095, 0.157] | 0.38 | 0.84 | 0.75 | 0.15 | – | 0.70 | 0.38 | – |
 | gemma4:e4b † | named | 40 | 0.127 [0.096, 0.157] | 0.38 | 0.85 | 0.57 | 0.25 | – | 0.82 | 0.38 | – |
-| qwen3.5:9b † | abstract | 36 | 0.153 [0.114, 0.190] | 0.30 | 0.79 | 0.81 | 0.39 | – | 0.58 | 0.33 | – |
-| qwen3.5:9b † | named | 37 | 0.177 [0.143, 0.212] | 0.17 | 0.65 | 0.49 | 0.30 | – | 0.43 | 0.19 | – |
+| qwen3.5:9b † | abstract | 40 | 0.140 [0.104, 0.177] | 0.35 | 0.80 | 0.78 | 0.40 | – | 0.57 | 0.35 | – |
+| qwen3.5:9b † | named | 40 | 0.178 [0.144, 0.213] | 0.17 | 0.67 | 0.53 | 0.28 | – | 0.42 | 0.17 | – |
 | qwen3:14b | abstract | 20 | 0.206 [0.160, 0.252] | 0.15 | 0.59 | 0.85 | 0.55 | – | 0.40 | 0.15 | – |
 | qwen3:14b | named | 20 | 0.217 [0.175, 0.261] | 0.05 | 0.63 | 1.30 | 0.35 | – | 0.30 | 0.05 | – |
 | qwen3:4b | named | 60 | 0.238 [0.232, 0.244] | 0.05 | 0.41 | 0.05 | 0.25 | – | 0.48 | 0.05 | – |
@@ -103,10 +103,10 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-20T13:39:07.51085
 | Agent | Labels | n | Brier [95% CI] (primary, lower is better) | Exact match | Edge acc | Confident-wrong / ep | Fell for trap | Handled confound | Ideal analysis of own data | Train | Held-out |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | scripted | named | 60 | 0.014 [0.009, 0.019] | 0.93 | 0.99 | 0.00 | 0.00 | – | 0.93 | 0.93 | – |
-| qwen3.5:9b † | abstract | 20 | 0.109 [0.068, 0.151] | 0.45 | 0.87 | 0.45 | 0.20 | – | 0.65 | 0.45 | – |
+| qwen3.5:9b † | abstract | 37 | 0.114 [0.071, 0.159] | 0.53 | 0.86 | 0.41 | 0.19 | – | 0.70 | 0.51 | – |
 | gemma4:e4b † | abstract | 40 | 0.130 [0.089, 0.170] | 0.45 | 0.85 | 0.88 | 0.25 | – | 0.72 | 0.45 | – |
 | random | named | 60 | 0.130 [0.102, 0.160] | 0.40 | 0.84 | 0.60 | 0.32 | – | 0.40 | 0.40 | – |
-| qwen3.5:9b † | named | 20 | 0.149 [0.102, 0.197] | 0.45 | 0.80 | 0.30 | 0.30 | – | 0.55 | 0.45 | – |
+| qwen3.5:9b † | named | 40 | 0.156 [0.122, 0.187] | 0.40 | 0.75 | 0.33 | 0.38 | – | 0.72 | 0.40 | – |
 | gemma4:e4b † | named | 40 | 0.188 [0.161, 0.215] | 0.07 | 0.72 | 0.57 | 0.40 | – | 0.82 | 0.07 | – |
 | qwen3:14b | abstract | 20 | 0.199 [0.169, 0.226] | 0.05 | 0.69 | 0.95 | 0.60 | – | 0.50 | 0.05 | – |
 | qwen3:14b | named | 20 | 0.222 [0.184, 0.259] | 0.05 | 0.64 | 1.30 | 0.50 | – | 0.55 | 0.05 | – |
@@ -128,7 +128,7 @@ Auto-generated from `results/ledger.jsonl` (data as of 2026-11-20T13:39:07.51085
 - **H3** (evaluated): llama3.2:3b: own claims 0.02 vs ideal analysis of its data 0.66; qwen3:4b: own claims 0.22 vs ideal analysis of its data 0.79; gemma3:4b: own claims 0.12 vs ideal analysis of its data 0.83; mistral:7b: own claims 0.15 vs ideal analysis of its data 0.85; qwen3:14b: own claims 0.69 vs ideal analysis of its data 0.81
 - **H4** (evaluated): Spearman rho(size, Brier) = -0.60 (negative = bigger is better; n = 5, p = 0.285)
 - **H5** (evaluated): Kendall tau synthetic vs semi-synthetic agent ranking = 1.00 (n = 8)
-- **H6** (evaluated): llama3.2:3b: Brier abstract - named = -0.016 (positive = names help); qwen3:4b: Brier abstract - named = +0.008 (positive = names help); gemma3:4b: Brier abstract - named = -0.000 (positive = names help); mistral:7b: Brier abstract - named = +0.012 (positive = names help); qwen3:14b: Brier abstract - named = +0.014 (positive = names help)
+- **H6** (evaluated): llama3.2:3b: Brier abstract - named = -0.016 (positive = names help); qwen3:4b: Brier abstract - named = +0.008 (positive = names help); gemma3:4b: Brier abstract - named = -0.000 (positive = names help); mistral:7b: Brier abstract - named = +0.013 (positive = names help); qwen3:14b: Brier abstract - named = +0.014 (positive = names help)
 - **B1** (evaluated): llama3.2:3b: Brier abstract - named = +0.011 over 40 tasks, Holm p = 0.176; qwen3:4b: Brier abstract - named = -0.002 over 40 tasks, Holm p = 1; gemma3:4b: Brier abstract - named = +0.003 over 40 tasks, Holm p = 1; mistral:7b: Brier abstract - named = -0.006 over 40 tasks, Holm p = 1; qwen3:14b: Brier abstract - named = +0.026 over 40 tasks, Holm p = 0.267
 - **B2** (evaluated): llama3.2:3b: Brier model - reference = +0.015 [-0.011, +0.039]; qwen3:4b: Brier model - reference = -0.025 [-0.048, -0.003]; gemma3:4b: Brier model - reference = +0.001 [-0.023, +0.025]; mistral:7b: Brier model - reference = +0.019 [-0.008, +0.045]; qwen3:14b: Brier model - reference = +0.009 [-0.019, +0.037]
 - **B3** (evaluated): llama3.2:3b: claims true 0.17 / reversed 0.15 / indirect 0.17 / confounded 0.15; qwen3:4b: claims true 0.08 / reversed 0.07 / indirect 0.05 / confounded 0.03; gemma3:4b: claims true 0.31 / reversed 0.23 / indirect 0.20 / confounded 0.25; mistral:7b: claims true 0.17 / reversed 0.15 / indirect 0.12 / confounded 0.16; qwen3:14b: claims true 0.29 / reversed 0.17 / indirect 0.11 / confounded 0.27

@@ -128,7 +128,12 @@ jobs:
             sudo tar -C /usr/local --zstd -xf /tmp/ollama/ollama-linux-amd64.tar.zst
           fi
           command -v ollama
-          curl -sf http://127.0.0.1:11434/api/tags >/dev/null || (nohup ollama serve >/tmp/ollama.log 2>&1 &)
+          # Big models (qwen3:14b, qwen3.5:9b) used to take every core and most of the RAM, so the runner agent
+          # stalled and GitHub killed the job ("lost communication"), losing the whole shard. Swap gives memory
+          # headroom; nice keeps the agent responsive; one model and one request at a time.
+          sudo fallocate -l 8G /mnt/axiom.swap && sudo chmod 600 /mnt/axiom.swap && sudo mkswap /mnt/axiom.swap && sudo swapon /mnt/axiom.swap || echo "::warning::no extra swap"
+          sudo systemctl stop ollama 2>/dev/null || true  # install.sh starts a service; run our own, niced
+          OLLAMA_NUM_PARALLEL=1 OLLAMA_MAX_LOADED_MODELS=1 nohup nice -n 15 ollama serve >/tmp/ollama.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://127.0.0.1:11434/api/tags >/dev/null && break; sleep 2; done
           for i in 1 2 3 4 5; do ollama pull "${{ matrix.model }}" && break; [ $i = 5 ] && exit 1; sleep $((i * 20)); done
       - name: Run shard ${{ matrix.shard }}
@@ -137,13 +142,18 @@ jobs:
         run: |
           .venv/bin/axiom run --plan plan.json --shard ${{ matrix.shard }} --budget-min 320 \
             --out results/incoming/${{ github.run_id }}-${{ matrix.shard }}.jsonl
+      # Upload only this shard's output: results/transcripts also holds every committed transcript (12k files).
+      - name: Stage new results
+        if: always()
+        run: |
+          mkdir -p /tmp/shard/results
+          cp -r results/incoming /tmp/shard/results/ 2>/dev/null || true
+          git ls-files --others --exclude-standard -z results/transcripts | xargs -0 -r cp --parents -t /tmp/shard
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: shard-${{ matrix.shard }}
-          path: |
-            results/incoming/
-            results/transcripts/
+          path: /tmp/shard/results/
           if-no-files-found: ignore
 
   collect:
